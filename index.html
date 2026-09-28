@@ -87,7 +87,25 @@
             color: #aaa;
         }
 
-        /* LP판 회전 애니메이션 효과 */
+        /* LP판 디자인 및 회전 효과 */
+        .lp-disc {
+            background: radial-gradient(circle, #333 12%, #111 13%, #111 40%, #222 41%, #111 70%);
+            position: relative;
+        }
+        /* 회전 시 시각적 표시용 흰색 줄 스타일 */
+        .lp-disc::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 45%;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.95);
+            transform-origin: left center;
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -106,6 +124,10 @@
         }
         .btn-active-stop {
             background-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .btn-active-restart {
+            background-color: #059669; /* emerald-600 */
             color: white;
         }
         .btn-inactive {
@@ -572,26 +594,29 @@
                         quizQuestionBox.innerHTML = `
                             <div class="text-lg md:text-xl font-bold mb-3 text-slate-800 whitespace-pre-line">${quiz.title}</div>
                             
-                            <!-- LP판 회전 아이콘 (시각 효과) -->
+                            <!-- 가이드 선이 포함된 회전 LP판 UI -->
                             <div class="relative w-28 h-28 my-2 flex items-center justify-center">
-                                <div id="lpRecord" class="w-28 h-28 rounded-full bg-slate-900 border-4 border-gray-700 flex items-center justify-center shadow-lg animate-spin-slow">
-                                    <div class="w-10 h-10 rounded-full bg-red-500 border-2 border-white"></div>
+                                <div id="lpRecord" class="lp-disc w-28 h-28 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-lg animate-spin-slow paused-spin">
+                                    <div class="w-10 h-10 rounded-full bg-red-500 border-2 border-white z-10"></div>
                                 </div>
                             </div>
 
-                            <!-- 숨김 처리된 유튜브 플레이어 (오디오 역할) -->
+                            <!-- 숨겨진 유튜브 오디오 iframe (autoplay=0으로 초기 정지) -->
                             <iframe id="ytPlayer" class="w-0 h-0 opacity-0 absolute pointer-events-none" 
-                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=1" 
+                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0" 
                                 allow="autoplay">
                             </iframe>
 
-                            <!-- 음원 제어용 버튼 -->
-                            <div class="flex gap-4 mt-2">
-                                <button id="playAudioBtn" onclick="toggleAudio(true)" class="px-5 py-2 btn-inactive font-bold text-sm rounded-lg shadow transition">
+                            <!-- 음원 제어용 버튼 (초기 상태: 재생 버튼 활성화) -->
+                            <div class="flex gap-2 md:gap-3 mt-3 flex-wrap justify-center">
+                                <button id="playAudioBtn" onclick="toggleAudio('play')" class="px-4 py-2 btn-active-play font-bold text-xs md:text-sm rounded-lg shadow transition">
                                     ▶ 음원 재생
                                 </button>
-                                <button id="stopAudioBtn" onclick="toggleAudio(false)" class="px-5 py-2 btn-active-stop font-bold text-sm rounded-lg shadow transition">
+                                <button id="stopAudioBtn" onclick="toggleAudio('stop')" class="px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition">
                                     ⏸ 정지
+                                </button>
+                                <button id="restartAudioBtn" onclick="toggleAudio('restart')" class="px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition">
+                                    🔄 처음부터
                                 </button>
                             </div>
                         `;
@@ -637,34 +662,38 @@
             isSpun = true;
         });
 
-        // 음원 재생/정지 토글, LP판 회전 제어 및 버튼 색상 전환
-        function toggleAudio(play) {
+        // 음원 재생/정지/다시재생 제어 함수
+        function toggleAudio(action) {
             const iframe = document.getElementById('ytPlayer');
             const playBtn = document.getElementById('playAudioBtn');
             const stopBtn = document.getElementById('stopAudioBtn');
+            const restartBtn = document.getElementById('restartAudioBtn');
             const lpRecord = document.getElementById('lpRecord');
 
-            if (iframe) {
-                const command = play ? 'playVideo' : 'pauseVideo';
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
-            }
+            if (action === 'play') {
+                if (iframe) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                if (lpRecord) lpRecord.classList.remove('paused-spin');
 
-            if (lpRecord) {
-                if (play) {
-                    lpRecord.classList.remove('paused-spin');
-                } else {
-                    lpRecord.classList.add('paused-spin');
-                }
-            }
+                if (playBtn) playBtn.className = 'px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition';
+                if (stopBtn) stopBtn.className = 'px-4 py-2 btn-active-stop font-bold text-xs md:text-sm rounded-lg shadow transition';
+                if (restartBtn) restartBtn.className = 'px-4 py-2 btn-active-restart font-bold text-xs md:text-sm rounded-lg shadow transition';
+            } else if (action === 'stop') {
+                if (iframe) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
+                if (lpRecord) lpRecord.classList.add('paused-spin');
 
-            if (playBtn && stopBtn) {
-                if (play) {
-                    playBtn.className = 'px-5 py-2 btn-inactive font-bold text-sm rounded-lg shadow transition';
-                    stopBtn.className = 'px-5 py-2 btn-active-stop font-bold text-sm rounded-lg shadow transition';
-                } else {
-                    playBtn.className = 'px-5 py-2 btn-active-play font-bold text-sm rounded-lg shadow transition';
-                    stopBtn.className = 'px-5 py-2 btn-inactive font-bold text-sm rounded-lg shadow transition';
+                if (playBtn) playBtn.className = 'px-4 py-2 btn-active-play font-bold text-xs md:text-sm rounded-lg shadow transition';
+                if (stopBtn) stopBtn.className = 'px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition';
+                if (restartBtn) restartBtn.className = 'px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition';
+            } else if (action === 'restart') {
+                if (iframe) {
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*');
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
                 }
+                if (lpRecord) lpRecord.classList.remove('paused-spin');
+
+                if (playBtn) playBtn.className = 'px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition';
+                if (stopBtn) stopBtn.className = 'px-4 py-2 btn-active-stop font-bold text-xs md:text-sm rounded-lg shadow transition';
+                if (restartBtn) restartBtn.className = 'px-4 py-2 btn-inactive font-bold text-xs md:text-sm rounded-lg shadow transition';
             }
         }
 
@@ -712,7 +741,7 @@
         drawRoulette();
 
         document.getElementById('btnO').addEventListener('click', () => {
-            toggleAudio(false);
+            toggleAudio('stop');
             popupO.classList.remove('hidden');
             popupO.classList.add('flex');
             popupRouletteResult.innerText = '';
@@ -771,7 +800,7 @@
         });
 
         document.getElementById('btnX').addEventListener('click', () => {
-            toggleAudio(false);
+            toggleAudio('stop');
             popupX.classList.remove('hidden');
             popupX.classList.add('flex');
         });
