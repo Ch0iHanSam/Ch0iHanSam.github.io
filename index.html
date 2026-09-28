@@ -86,6 +86,15 @@
             cursor: not-allowed;
             color: #aaa;
         }
+
+        /* LP판 회전 애니메이션 효과 */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin 3s linear infinite;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -145,7 +154,7 @@
             <h2 class="title-font text-4xl text-yellow-400 drop-shadow-md">QUIZ TIME</h2>
         </div>
 
-        <div id="quizQuestionBox" class="w-full bg-white rounded-2xl min-h-80 md:min-h-96 shadow-2xl flex flex-col items-center justify-center p-4 text-black text-xl md:text-2xl font-bold mb-8 text-center leading-relaxed overflow-hidden">
+        <div id="quizQuestionBox" class="w-full bg-white rounded-2xl min-h-80 shadow-2xl flex flex-col items-center justify-center p-6 text-black text-xl md:text-2xl font-bold mb-8 text-center leading-relaxed overflow-hidden">
             여기에 문제가 출제됩니다.
         </div>
 
@@ -215,7 +224,6 @@
             { label: '배민 1만원', weight: 1, color: '#34d399' }
         ];
 
-        // 퍼가기가 확실히 수용되는 유튜브 공식 샘플 영상 링크
         const sampleVideoUrl = 'https://www.youtube.com/watch?v=M7lc1UVf-VE';
 
         const quizDatabase = {};
@@ -227,11 +235,11 @@
 
                     if (q.text === '1초 듣기') {
                         quizDatabase[key] = [
-                            { type: 'video', src: sampleVideoUrl, title: `Q. [${y.text}] ${g.text} 1초를 듣고 곡명을 맞춰보세요!` }
+                            { type: 'video', src: sampleVideoUrl, title: `🎵 [${y.text}] ${g.text} 1초 음원을 듣고 맞춰보세요!` }
                         ];
                     } else if (q.text === 'MR 5초 듣기') {
                         quizDatabase[key] = [
-                            { type: 'video', src: sampleVideoUrl, title: `Q. [${y.text}] ${g.text} MR 5초를 듣고 제목을 맞춰보세요!` }
+                            { type: 'video', src: sampleVideoUrl, title: `🎼 [${y.text}] ${g.text} MR 5초 음원을 듣고 맞춰보세요!` }
                         ];
                     } else {
                         quizDatabase[key] = [
@@ -313,25 +321,34 @@
                 if (questionList && questionList.length > 0) {
                     const quiz = questionList[Math.floor(Math.random() * questionList.length)];
 
+                    // 오디오 전용 플레이어 구성 (유튜브 비디오는 너비/높이 0px로 숨김)
                     if (quiz.type === 'video') {
                         const videoId = getYoutubeId(quiz.src);
-                        const rawUrl = quiz.src;
-                        
-                        // youtube-nocookie.com 도메인 사용 (153 오류 차단 완화)
                         quizQuestionBox.innerHTML = `
-                            <div class="text-lg md:text-xl font-bold mb-3 text-slate-800">${quiz.title || '영상을 감상하고 문제를 맞춰보세요!'}</div>
-                            <div class="w-full h-48 md:h-64 mb-2">
-                                <iframe class="w-full h-full rounded-xl shadow" 
-                                    src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0" 
-                                    title="YouTube video player" 
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-                                </iframe>
+                            <div class="text-xl md:text-2xl font-bold mb-4 text-slate-800">${quiz.title}</div>
+                            
+                            <!-- LP판 회전 아이콘 디자인 -->
+                            <div class="relative w-28 h-28 my-2 flex items-center justify-center">
+                                <div class="w-28 h-28 rounded-full bg-slate-900 border-4 border-gray-700 flex items-center justify-center shadow-lg animate-spin-slow">
+                                    <div class="w-10 h-10 rounded-full bg-red-500 border-2 border-white"></div>
+                                </div>
                             </div>
-                            <a href="${rawUrl}" target="_blank" class="text-xs text-blue-600 underline font-semibold mt-1">
-                                🔗 동영상이 출력되지 않나요? (클릭하여 유튜브에서 직접 열기)
-                            </a>
+
+                            <!-- 숨겨진 유튜브 오디오 플레이어 iframe -->
+                            <iframe id="ytPlayer" class="w-0 h-0 opacity-0 absolute pointer-events-none" 
+                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=1" 
+                                allow="autoplay">
+                            </iframe>
+
+                            <!-- 재생 / 일시정지 제어 버튼 -->
+                            <div class="flex gap-4 mt-4">
+                                <button onclick="toggleAudio(true)" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg shadow transition">
+                                    ▶ 음원 재생
+                                </button>
+                                <button onclick="toggleAudio(false)" class="px-5 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold text-sm rounded-lg shadow transition">
+                                    ⏸ 정지
+                                </button>
+                            </div>
                         `;
                     } else {
                         quizQuestionBox.innerText = quiz.title || quiz;
@@ -374,6 +391,15 @@
             spinBtn.disabled = false;
             isSpun = true;
         });
+
+        // 음원 재생/정지 제어 함수 (postMessage 제어)
+        function toggleAudio(play) {
+            const iframe = document.getElementById('ytPlayer');
+            if (iframe) {
+                const command = play ? 'playVideo' : 'pauseVideo';
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
+            }
+        }
 
         const canvas = document.getElementById('rouletteCanvas');
         const ctx = canvas.getContext('2d');
@@ -419,6 +445,7 @@
         drawRoulette();
 
         document.getElementById('btnO').addEventListener('click', () => {
+            toggleAudio(false); // 팝업 열릴 때 음원 일시정지
             popupO.classList.remove('hidden');
             popupO.classList.add('flex');
             popupRouletteResult.innerText = '';
@@ -477,6 +504,7 @@
         });
 
         document.getElementById('btnX').addEventListener('click', () => {
+            toggleAudio(false); // 팝업 열릴 때 음원 일시정지
             popupX.classList.remove('hidden');
             popupX.classList.add('flex');
         });
