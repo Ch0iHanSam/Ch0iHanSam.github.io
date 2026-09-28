@@ -200,7 +200,61 @@
         </div>
     </div>
 
-    <!-- 3. 팝업창 영역 -->
+    <!-- 3. 테스트 페이지 영역 -->
+    <div id="testScreen" class="w-full max-w-xl hidden flex-col items-center justify-center bg-slate-900 border-4 border-indigo-500/50 rounded-2xl p-6 md:p-8 shadow-2xl my-auto">
+        <div class="text-center mb-6">
+            <h2 class="title-font text-3xl md:text-4xl text-indigo-400 drop-shadow-md">🧪 TEST PAGE</h2>
+            <p class="text-gray-400 text-sm mt-1">원하는 곡과 재생 시간을 선택하여 테스트해 보세요.</p>
+        </div>
+
+        <!-- LP판 재생 메뉴 (가운데 배치) -->
+        <div class="w-full bg-white rounded-xl p-6 shadow-inner flex flex-col items-center justify-center mb-6 text-black">
+            <div id="testSongTitleDisplay" class="text-base md:text-lg font-bold mb-3 text-slate-800 text-center">
+                곡을 선택해주세요.
+            </div>
+
+            <div class="relative w-28 h-28 my-2 flex items-center justify-center">
+                <div id="testLpRecord" class="lp-disc w-28 h-28 rounded-full border-4 border-gray-700 flex items-center justify-center shadow-lg animate-spin-slow paused-spin">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 border-2 border-white z-10"></div>
+                </div>
+            </div>
+
+            <!-- 숨겨진 테스트 유튜브 플레이어 -->
+            <iframe id="testYtPlayer" class="w-0 h-0 opacity-0 absolute pointer-events-none" 
+                src="" allow="autoplay">
+            </iframe>
+
+            <div class="flex mt-3 justify-center">
+                <button id="testPlayAudioBtn" onclick="playTestAudioWithLimit()" class="px-6 py-2.5 btn-active-play font-bold text-sm md:text-base rounded-xl shadow-md transition">
+                    ▶ 음원 재생 (1초)
+                </button>
+            </div>
+        </div>
+
+        <!-- 컨트롤 드롭다운 메뉴 영역 -->
+        <div class="w-full flex flex-col gap-4 mb-8">
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-1">🎵 곡 선택</label>
+                <select id="testSongSelect" onchange="changeTestSong()" class="w-full bg-slate-800 border border-slate-600 text-white rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500">
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-gray-300 text-sm font-bold mb-1">⏱️ 재생 시간 선택</label>
+                <select id="testDurationSelect" onchange="changeTestDuration()" class="w-full bg-slate-800 border border-slate-600 text-white rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500">
+                    <option value="1">1초 듣기</option>
+                    <option value="5">5초 듣기</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 메인 페이지 이동 버튼 -->
+        <button id="goToMainBtn" class="w-full py-3.5 bg-gray-700 hover:bg-gray-600 active:scale-95 text-white font-bold rounded-xl shadow-lg transition text-center border border-gray-500">
+            🏠 메인 페이지로 돌아가기
+        </button>
+    </div>
+
+    <!-- 4. 팝업창 영역 -->
     <div id="popupO" class="fixed inset-0 bg-black/85 hidden items-center justify-center z-50 p-4">
         <div class="bg-slate-900 border-4 border-yellow-400 rounded-2xl p-6 w-full max-w-sm md:max-w-md relative flex flex-col items-center shadow-2xl">
             <button class="close-popup absolute top-3 right-4 text-gray-400 hover:text-white text-3xl font-bold">✕</button>
@@ -225,9 +279,14 @@
         </div>
     </div>
 
+    <!-- 좌측 하단 테스트 페이지 이동 버튼 -->
+    <button id="openTestBtn" class="fixed bottom-3 left-4 text-xs font-semibold bg-indigo-900/80 hover:bg-indigo-700 text-indigo-200 px-3 py-1.5 rounded-lg border border-indigo-500/50 shadow transition z-40">
+        🧪 테스트 페이지
+    </button>
+
     <!-- 우측 하단 버전 표시 -->
     <div class="fixed bottom-3 right-4 text-xs font-semibold text-gray-400/80 tracking-wider pointer-events-none select-none">
-        v 1.5.1
+        v 1.5.2
     </div>
 
     <script>
@@ -430,7 +489,7 @@
                     { title: 'HYUKOH - TOMBOY (2017)', url: 'https://www.youtube.com/watch?v=j1X2w2K3F0M' }
                 ],
                 '힙합': [
-                    { title: '창모 - METEOR (2019)', url: 'https://www.youtube.com/watch?v=k1X2w2K3F0M' },
+                    { title: '창모 - METEOR (2019)', url: 'https://www.youtube.com/watch?v=lOrU0MH0bMk&list=RDlOrU0MH0bMk&start_radio=1' },
                     { title: '우원재 - 시차 (We Are) (2017)', url: 'https://www.youtube.com/watch?v=l1X2w2K3F0M' },
                     { title: '비와이 - Day Day (2016)', url: 'https://www.youtube.com/watch?v=m1X2w2K3F0M' },
                     { title: '마미손 - 소년점프 (2018)', url: 'https://www.youtube.com/watch?v=n1X2w2K3F0M' },
@@ -484,11 +543,18 @@
         };
 
         const quizDatabase = {};
+        const allSongList = [];
 
         col1Data.forEach(y => {
             col2Data.forEach(g => {
                 const songs = (rawSongData[y.text] && rawSongData[y.text][g.text]) ? rawSongData[y.text][g.text] : [];
                 
+                songs.forEach(song => {
+                    if (!allSongList.some(s => s.url === song.url)) {
+                        allSongList.push(song);
+                    }
+                });
+
                 col3Data.forEach(q => {
                     const key = `${y.text}_${g.text}_${q.text}`;
 
@@ -530,6 +596,11 @@
         let currentQuizDuration = 0; 
         let audioTimer = null; 
 
+        // 테스트 페이지 관련 상태
+        let testAudioTimer = null;
+        let selectedTestSongUrl = '';
+        let selectedTestDuration = 1;
+
         function getRandomItemByWeight(items) {
             const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
             let random = Math.random() * totalWeight;
@@ -551,6 +622,7 @@
         const resultText = document.getElementById('resultText');
         const rouletteScreen = document.getElementById('rouletteScreen');
         const quizScreen = document.getElementById('quizScreen');
+        const testScreen = document.getElementById('testScreen');
         const quizQuestionBox = document.getElementById('quizQuestionBox');
         const popupO = document.getElementById('popupO');
         const popupX = document.getElementById('popupX');
@@ -682,13 +754,11 @@
                 lpRecord.classList.remove('paused-spin');
             }
 
-            // 지정 시간 뒤 자동 정지
             audioTimer = setTimeout(() => {
                 stopAudio();
             }, currentQuizDuration * 1000);
         }
 
-        // 음원 정지 및 재생 버튼 재활성화 함수
         function stopAudio() {
             clearTimeout(audioTimer);
 
@@ -708,6 +778,121 @@
                 lpRecord.classList.add('paused-spin');
             }
         }
+
+        // --- 테스트 페이지 제어 로직 ---
+        function initTestPage() {
+            const testSongSelect = document.getElementById('testSongSelect');
+            testSongSelect.innerHTML = '';
+
+            allSongList.forEach((song, idx) => {
+                const opt = document.createElement('option');
+                opt.value = song.url;
+                opt.innerText = song.title;
+                testSongSelect.appendChild(opt);
+            });
+
+            if (allSongList.length > 0) {
+                selectedTestSongUrl = allSongList[0].url;
+                updateTestPlayerIframe();
+            }
+        }
+
+        function updateTestPlayerIframe() {
+            const iframe = document.getElementById('testYtPlayer');
+            const videoId = getYoutubeId(selectedTestSongUrl);
+            const titleDisplay = document.getElementById('testSongTitleDisplay');
+            
+            const songObj = allSongList.find(s => s.url === selectedTestSongUrl);
+            if (songObj && titleDisplay) {
+                titleDisplay.innerText = songObj.title;
+            }
+
+            if (iframe && videoId) {
+                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0`;
+            }
+        }
+
+        function changeTestSong() {
+            const testSongSelect = document.getElementById('testSongSelect');
+            selectedTestSongUrl = testSongSelect.value;
+            stopTestAudio();
+            updateTestPlayerIframe();
+        }
+
+        function changeTestDuration() {
+            const durationSelect = document.getElementById('testDurationSelect');
+            selectedTestDuration = parseInt(durationSelect.value, 10);
+            const playBtn = document.getElementById('testPlayAudioBtn');
+            if (playBtn) {
+                playBtn.innerText = `▶ 음원 재생 (${selectedTestDuration}초)`;
+            }
+        }
+
+        function playTestAudioWithLimit() {
+            const iframe = document.getElementById('testYtPlayer');
+            const playBtn = document.getElementById('testPlayAudioBtn');
+            const lpRecord = document.getElementById('testLpRecord');
+
+            clearTimeout(testAudioTimer);
+
+            if (iframe) {
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+            }
+
+            if (playBtn) {
+                playBtn.className = 'px-6 py-2.5 btn-inactive font-bold text-sm md:text-base rounded-xl shadow-md transition';
+                playBtn.disabled = true;
+            }
+            if (lpRecord) {
+                lpRecord.classList.remove('paused-spin');
+            }
+
+            testAudioTimer = setTimeout(() => {
+                stopTestAudio();
+            }, selectedTestDuration * 1000);
+        }
+
+        function stopTestAudio() {
+            clearTimeout(testAudioTimer);
+
+            const iframe = document.getElementById('testYtPlayer');
+            const playBtn = document.getElementById('testPlayAudioBtn');
+            const lpRecord = document.getElementById('testLpRecord');
+
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
+            }
+
+            if (playBtn) {
+                playBtn.className = 'px-6 py-2.5 btn-active-play font-bold text-sm md:text-base rounded-xl shadow-md transition';
+                playBtn.disabled = false;
+            }
+            if (lpRecord) {
+                lpRecord.classList.add('paused-spin');
+            }
+        }
+
+        // 화면 전환 이벤트 처리
+        document.getElementById('openTestBtn').addEventListener('click', () => {
+            stopAudio();
+            rouletteScreen.classList.add('hidden');
+            quizScreen.classList.add('hidden');
+            quizScreen.classList.remove('flex');
+            
+            testScreen.classList.remove('hidden');
+            testScreen.classList.add('flex');
+
+            initTestPage();
+        });
+
+        document.getElementById('goToMainBtn').addEventListener('click', () => {
+            stopTestAudio();
+            testScreen.classList.add('hidden');
+            testScreen.classList.remove('flex');
+
+            rouletteScreen.classList.remove('hidden');
+        });
 
         const canvas = document.getElementById('rouletteCanvas');
         const ctx = canvas.getContext('2d');
