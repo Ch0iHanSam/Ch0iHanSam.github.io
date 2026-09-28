@@ -286,7 +286,7 @@
 
     <!-- 우측 하단 버전 표시 -->
     <div class="fixed bottom-3 right-4 text-xs font-semibold text-gray-400/80 tracking-wider pointer-events-none select-none">
-        v 1.5.2
+        v 1.5.3
     </div>
 
     <script>
@@ -320,224 +320,225 @@
             { label: '배민 1만원', weight: 1, color: '#34d399' }
         ];
 
+        // 각 곡 객체에 start: 시작시간(초)을 설정할 수 있습니다. (기본값: 0)
         const rawSongData = {
             '00~05': {
                 'KPOP': [
-                    { title: '보아 - No.1 (2002)', url: 'https://www.youtube.com/watch?v=ceZ3-A1w68M' },
-                    { title: '동방신기 - Hug (2004)', url: 'https://www.youtube.com/watch?v=RNprQY23I90' },
-                    { title: 'god - 촛불하나 (2000)', url: 'https://www.youtube.com/watch?v=uK1X_c3xGNo' },
-                    { title: '신화 - Perfect Man (2002)', url: 'https://www.youtube.com/watch?v=3iXk5GvM9x0' },
-                    { title: '비 - 태양을 피하는 방법 (2003)', url: 'https://www.youtube.com/watch?v=0j3tE1A2fC0' }
+                    { title: '보아 - No.1 (2002)', url: 'https://www.youtube.com/watch?v=ceZ3-A1w68M', start: 0 },
+                    { title: '동방신기 - Hug (2004)', url: 'https://www.youtube.com/watch?v=RNprQY23I90', start: 0 },
+                    { title: 'god - 촛불하나 (2000)', url: 'https://www.youtube.com/watch?v=uK1X_c3xGNo', start: 0 },
+                    { title: '신화 - Perfect Man (2002)', url: 'https://www.youtube.com/watch?v=3iXk5GvM9x0', start: 0 },
+                    { title: '비 - 태양을 피하는 방법 (2003)', url: 'https://www.youtube.com/watch?v=0j3tE1A2fC0', start: 0 }
                 ],
                 'POP': [
-                    { title: 'Britney Spears - Toxic (2003)', url: 'https://www.youtube.com/watch?v=LOZuxwoc7B8' },
-                    { title: 'Eminem - Lose Yourself (2002)', url: 'https://www.youtube.com/watch?v=_Yhyp-_hX2s' },
-                    { title: 'Beyonce - Crazy In Love (2003)', url: 'https://www.youtube.com/watch?v=ViwtNLUqk4U' },
-                    { title: 'Avril Lavigne - Sk8er Boi (2002)', url: 'https://www.youtube.com/watch?v=TIy3n2b7V9k' },
-                    { title: 'Maroon 5 - This Love (2002)', url: 'https://www.youtube.com/watch?v=XPpTgZwycfg' }
+                    { title: 'Britney Spears - Toxic (2003)', url: 'https://www.youtube.com/watch?v=LOZuxwoc7B8', start: 0 },
+                    { title: 'Eminem - Lose Yourself (2002)', url: 'https://www.youtube.com/watch?v=_Yhyp-_hX2s', start: 0 },
+                    { title: 'Beyonce - Crazy In Love (2003)', url: 'https://www.youtube.com/watch?v=ViwtNLUqk4U', start: 0 },
+                    { title: 'Avril Lavigne - Sk8er Boi (2002)', url: 'https://www.youtube.com/watch?v=TIy3n2b7V9k', start: 0 },
+                    { title: 'Maroon 5 - This Love (2002)', url: 'https://www.youtube.com/watch?v=XPpTgZwycfg', start: 0 }
                 ],
                 'JPOP': [
-                    { title: 'Utada Hikaru - First Love (2000)', url: 'https://www.youtube.com/watch?v=o1sUaVJUeB0' },
-                    { title: 'Nakashima Mika - 눈의 꽃 (雪の華) (2003)', url: 'https://www.youtube.com/watch?v=mF5Qq2YqI4U' },
-                    { title: 'SMAP - 세계에 하나뿐인 꽃 (世界に一つだけの花) (2003)', url: 'https://www.youtube.com/watch?v=r0f2o2vP5G0' },
-                    { title: 'Otsuka Ai - Sakuranbo (さくらんぼ) (2003)', url: 'https://www.youtube.com/watch?v=upR9K48E1N0' },
-                    { title: 'ZONE - secret base 君がくれたもの (2001)', url: 'https://www.youtube.com/watch?v=f0b3Z2X7L8Y' }
+                    { title: 'Utada Hikaru - First Love (2000)', url: 'https://www.youtube.com/watch?v=o1sUaVJUeB0', start: 0 },
+                    { title: 'Nakashima Mika - 눈의 꽃 (雪の華) (2003)', url: 'https://www.youtube.com/watch?v=mF5Qq2YqI4U', start: 0 },
+                    { title: 'SMAP - 세계에 하나뿐인 꽃 (世界に一つだけの花) (2003)', url: 'https://www.youtube.com/watch?v=r0f2o2vP5G0', start: 0 },
+                    { title: 'Otsuka Ai - Sakuranbo (さくらんぼ) (2003)', url: 'https://www.youtube.com/watch?v=upR9K48E1N0', start: 0 },
+                    { title: 'ZONE - secret base 君がくれたもの (2001)', url: 'https://www.youtube.com/watch?v=f0b3Z2X7L8Y', start: 0 }
                 ],
                 '발라드': [
-                    { title: '브라운아이즈 - 벌써 일년 (2001)', url: 'https://www.youtube.com/watch?v=0kPq_E3Xq8Y' },
-                    { title: '김범수 - 보고 싶다 (2002)', url: 'https://www.youtube.com/watch?v=V3l1N1u8L3k' },
-                    { title: 'SG워너비 - Timeless (2004)', url: 'https://www.youtube.com/watch?v=1xN5I9oW2I8' },
-                    { title: '이승기 - 내 여자라니까 (2004)', url: 'https://www.youtube.com/watch?v=9j0p2b4c5w0' },
-                    { title: '윤도현 - 사랑했나봐 (2005)', url: 'https://www.youtube.com/watch?v=3m0X8w3y8Y0' }
+                    { title: '브라운아이즈 - 벌써 일년 (2001)', url: 'https://www.youtube.com/watch?v=0kPq_E3Xq8Y', start: 0 },
+                    { title: '김범수 - 보고 싶다 (2002)', url: 'https://www.youtube.com/watch?v=V3l1N1u8L3k', start: 0 },
+                    { title: 'SG워너비 - Timeless (2004)', url: 'https://www.youtube.com/watch?v=1xN5I9oW2I8', start: 0 },
+                    { title: '이승기 - 내 여자라니까 (2004)', url: 'https://www.youtube.com/watch?v=9j0p2b4c5w0', start: 0 },
+                    { title: '윤도현 - 사랑했나봐 (2005)', url: 'https://www.youtube.com/watch?v=3m0X8w3y8Y0', start: 0 }
                 ],
                 '밴드': [
-                    { title: '체리필터 - 낭만고양이 (2002)', url: 'https://www.youtube.com/watch?v=4xX4E2y1Y8M' },
-                    { title: '자우림 - 하하하积极 (2004)', url: 'https://www.youtube.com/watch?v=5X9Z9y1w2Y0' },
-                    { title: '델리스파이스 - 고백 (2003)', url: 'https://www.youtube.com/watch?v=6m1X9w2y3Y0' },
-                    { title: 'YB - 오 필승 코리아 (2002)', url: 'https://www.youtube.com/watch?v=7X9Z9w2y4Y0' },
-                    { title: '크라잉넛 - 밤이 깊었네 (2001)', url: 'https://www.youtube.com/watch?v=8X9Z9w2y5Y0' }
+                    { title: '체리필터 - 낭만고양이 (2002)', url: 'https://www.youtube.com/watch?v=4xX4E2y1Y8M', start: 0 },
+                    { title: '자우림 - 하하하积极 (2004)', url: 'https://www.youtube.com/watch?v=5X9Z9y1w2Y0', start: 0 },
+                    { title: '델리스파이스 - 고백 (2003)', url: 'https://www.youtube.com/watch?v=6m1X9w2y3Y0', start: 0 },
+                    { title: 'YB - 오 필승 코리아 (2002)', url: 'https://www.youtube.com/watch?v=7X9Z9w2y4Y0', start: 0 },
+                    { title: '크라잉넛 - 밤이 깊었네 (2001)', url: 'https://www.youtube.com/watch?v=8X9Z9w2y5Y0', start: 0 }
                 ],
                 '힙합': [
-                    { title: '에픽하이 - Fly (2005)', url: 'https://www.youtube.com/watch?v=9X9Z9w2y6Y0' },
-                    { title: '다이나믹 듀오 - Ring My Bell (2004)', url: 'https://www.youtube.com/watch?v=0X9Z9w2y7Y0' },
-                    { title: '드렁큰타이거 - 몬스터 (2005)', url: 'https://www.youtube.com/watch?v=1X9Z9w2y8Y0' },
-                    { title: '리쌍 - 내가 웃는 게 아니야 (2005)', url: 'https://www.youtube.com/watch?v=2X9Z9w2y9Y0' },
-                    { title: '조PD - 친구여 (feat. 인순이) (2004)', url: 'https://www.youtube.com/watch?v=3X9Z9w2y0Y0' }
+                    { title: '에픽하이 - Fly (2005)', url: 'https://www.youtube.com/watch?v=9X9Z9w2y6Y0', start: 0 },
+                    { title: '다이나믹 듀오 - Ring My Bell (2004)', url: 'https://www.youtube.com/watch?v=0X9Z9w2y7Y0', start: 0 },
+                    { title: '드렁큰타이거 - 몬스터 (2005)', url: 'https://www.youtube.com/watch?v=1X9Z9w2y8Y0', start: 0 },
+                    { title: '리쌍 - 내가 웃는 게 아니야 (2005)', url: 'https://www.youtube.com/watch?v=2X9Z9w2y9Y0', start: 0 },
+                    { title: '조PD - 친구여 (feat. 인순이) (2004)', url: 'https://www.youtube.com/watch?v=3X9Z9w2y0Y0', start: 0 }
                 ]
             },
             '05~10': {
                 'KPOP': [
-                    { title: '원더걸스 - Tell Me (2007)', url: 'https://www.youtube.com/watch?v=BlHv33fK160' },
-                    { title: '소녀시대 - Gee (2009)', url: 'https://www.youtube.com/watch?v=60ItHLz5WEA' },
-                    { title: '빅뱅 - 거짓말 (2007)', url: 'https://www.youtube.com/watch?v=2Cv31x38q42' },
-                    { title: '2NE1 - Fire (2009)', url: 'https://www.youtube.com/watch?v=ISEoXd04P-s' },
-                    { title: '슈퍼주니어 - Sorry, Sorry (2009)', url: 'https://www.youtube.com/watch?v=x6QA3m58DQw' }
+                    { title: '원더걸스 - Tell Me (2007)', url: 'https://www.youtube.com/watch?v=BlHv33fK160', start: 0 },
+                    { title: '소녀시대 - Gee (2009)', url: 'https://www.youtube.com/watch?v=60ItHLz5WEA', start: 0 },
+                    { title: '빅뱅 - 거짓말 (2007)', url: 'https://www.youtube.com/watch?v=2Cv31x38q42', start: 0 },
+                    { title: '2NE1 - Fire (2009)', url: 'https://www.youtube.com/watch?v=ISEoXd04P-s', start: 0 },
+                    { title: '슈퍼주니어 - Sorry, Sorry (2009)', url: 'https://www.youtube.com/watch?v=x6QA3m58DQw', start: 0 }
                 ],
                 'POP': [
-                    { title: 'Lady Gaga - Poker Face (2008)', url: 'https://www.youtube.com/watch?v=bESGLojNYSo' },
-                    { title: 'Beyonce - Single Ladies (2008)', url: 'https://www.youtube.com/watch?v=4m1EFMoRFvY' },
-                    { title: 'Rihanna - Umbrella (2007)', url: 'https://www.youtube.com/watch?v=CvBfHwUxBIO' },
-                    { title: 'Justin Bieber - Baby (2010)', url: 'https://www.youtube.com/watch?v=kffacxfA7G4' },
-                    { title: 'Jason Mraz - I\'m Yours (2008)', url: 'https://www.youtube.com/watch?v=EkHTsc9PU2A' }
+                    { title: 'Lady Gaga - Poker Face (2008)', url: 'https://www.youtube.com/watch?v=bESGLojNYSo', start: 0 },
+                    { title: 'Beyonce - Single Ladies (2008)', url: 'https://www.youtube.com/watch?v=4m1EFMoRFvY', start: 0 },
+                    { title: 'Rihanna - Umbrella (2007)', url: 'https://www.youtube.com/watch?v=CvBfHwUxBIO', start: 0 },
+                    { title: 'Justin Bieber - Baby (2010)', url: 'https://www.youtube.com/watch?v=kffacxfA7G4', start: 0 },
+                    { title: 'Jason Mraz - I\'m Yours (2008)', url: 'https://www.youtube.com/watch?v=EkHTsc9PU2A', start: 0 }
                 ],
                 'JPOP': [
-                    { title: 'AKB48 - Heavy Rotation (2010)', url: 'https://www.youtube.com/watch?v=lkHlnWFnA0c' },
-                    { title: 'Arashi - Love so sweet (2007)', url: 'https://www.youtube.com/watch?v=E_P-L4F_w_M' },
-                    { title: 'Supercell - 君の知らない物語 (2009)', url: 'https://www.youtube.com/watch?v=cMBAO46L_D8' },
-                    { title: 'YUI - CHE.R.RY (2007)', url: 'https://www.youtube.com/watch?v=2fA1mG_M6bE' },
-                    { title: 'GreeeeN - Kiseki (キセキ) (2008)', url: 'https://www.youtube.com/watch?v=S8L_M2F_w_M' }
+                    { title: 'AKB48 - Heavy Rotation (2010)', url: 'https://www.youtube.com/watch?v=lkHlnWFnA0c', start: 0 },
+                    { title: 'Arashi - Love so sweet (2007)', url: 'https://www.youtube.com/watch?v=E_P-L4F_w_M', start: 0 },
+                    { title: 'Supercell - 君の知らない物語 (2009)', url: 'https://www.youtube.com/watch?v=cMBAO46L_D8', start: 0 },
+                    { title: 'YUI - CHE.R.RY (2007)', url: 'https://www.youtube.com/watch?v=2fA1mG_M6bE', start: 0 },
+                    { title: 'GreeeeN - Kiseki (キセキ) (2008)', url: 'https://www.youtube.com/watch?v=S8L_M2F_w_M', start: 0 }
                 ],
                 '발라드': [
-                    { title: '이적 - 다행이다 (2007)', url: 'https://www.youtube.com/watch?v=b0P-L4F_w_M' },
-                    { title: '백지영 - 총 맞은 것처럼 (2008)', url: 'https://www.youtube.com/watch?v=c0P-L4F_w_M' },
-                    { title: '성시경 - 거리에서 (2006)', url: 'https://www.youtube.com/watch?v=d0P-L4F_w_M' },
-                    { title: '정엽 - Nothing Better (2008)', url: 'https://www.youtube.com/watch?v=e0P-L4F_w_M' },
-                    { title: '2AM - 죽어도 못 보내 (2010)', url: 'https://www.youtube.com/watch?v=f0P-L4F_w_M' }
+                    { title: '이적 - 다행이다 (2007)', url: 'https://www.youtube.com/watch?v=b0P-L4F_w_M', start: 0 },
+                    { title: '백지영 - 총 맞은 것처럼 (2008)', url: 'https://www.youtube.com/watch?v=c0P-L4F_w_M', start: 0 },
+                    { title: '성시경 - 거리에서 (2006)', url: 'https://www.youtube.com/watch?v=d0P-L4F_w_M', start: 0 },
+                    { title: '정엽 - Nothing Better (2008)', url: 'https://www.youtube.com/watch?v=e0P-L4F_w_M', start: 0 },
+                    { title: '2AM - 죽어도 못 보내 (2010)', url: 'https://www.youtube.com/watch?v=f0P-L4F_w_M', start: 0 }
                 ],
                 '밴드': [
-                    { title: 'FT아일랜드 - 사랑앓이 (2007)', url: 'https://www.youtube.com/watch?v=g0P-L4F_w_M' },
-                    { title: 'CNBLUE - 외토리야 (2010)', url: 'https://www.youtube.com/watch?v=h0P-L4F_w_M' },
-                    { title: '장기하와 얼굴들 - 싸구려 커피 (2008)', url: 'https://www.youtube.com/watch?v=i0P-L4F_w_M' },
-                    { title: '넬 - 기억을 걷는 시간 (2008)', url: 'https://www.youtube.com/watch?v=j0P-L4F_w_M' },
-                    { title: '십센치(10cm) - 아메리카노 (2010)', url: 'https://www.youtube.com/watch?v=k0P-L4F_w_M' }
+                    { title: 'FT아일랜드 - 사랑앓이 (2007)', url: 'https://www.youtube.com/watch?v=g0P-L4F_w_M', start: 0 },
+                    { title: 'CNBLUE - 외토리야 (2010)', url: 'https://www.youtube.com/watch?v=h0P-L4F_w_M', start: 0 },
+                    { title: '장기하와 얼굴들 - 싸구려 커피 (2008)', url: 'https://www.youtube.com/watch?v=i0P-L4F_w_M', start: 0 },
+                    { title: '넬 - 기억을 걷는 시간 (2008)', url: 'https://www.youtube.com/watch?v=j0P-L4F_w_M', start: 0 },
+                    { title: '십센치(10cm) - 아메리카노 (2010)', url: 'https://www.youtube.com/watch?v=k0P-L4F_w_M', start: 0 }
                 ],
                 '힙합': [
-                    { title: '에픽하이 - Love Love Love (2007)', url: 'https://www.youtube.com/watch?v=l0P-L4F_w_M' },
-                    { title: '아웃사이더 - 외토리 (2009)', url: 'https://www.youtube.com/watch?v=m0P-L4F_w_M' },
-                    { title: '다이나믹 듀오 - 죽일 놈 (2009)', url: 'https://www.youtube.com/watch?v=n0P-L4F_w_M' },
-                    { title: '리쌍 - 헤어지지 못하는 여자, 떠나가지 못하는 남자 (2009)', url: 'https://www.youtube.com/watch?v=o0P-L4F_w_M' }
+                    { title: '에픽하이 - Love Love Love (2007)', url: 'https://www.youtube.com/watch?v=l0P-L4F_w_M', start: 0 },
+                    { title: '아웃사이더 - 외토리 (2009)', url: 'https://www.youtube.com/watch?v=m0P-L4F_w_M', start: 0 },
+                    { title: '다이나믹 듀오 - 죽일 놈 (2009)', url: 'https://www.youtube.com/watch?v=n0P-L4F_w_M', start: 0 },
+                    { title: '리쌍 - 헤어지지 못하는 여자, 떠나가지 못하는 남자 (2009)', url: 'https://www.youtube.com/watch?v=o0P-L4F_w_M', start: 0 }
                 ]
             },
             '10~15': {
                 'KPOP': [
-                    { title: '싸이 - 강남스타일 (2012)', url: 'https://www.youtube.com/watch?v=9bZkp7q19f0' },
-                    { title: 'EXO - 으르렁 (Growl) (2013)', url: 'https://www.youtube.com/watch?v=I3nexVsk27U' },
-                    { title: '아이유 - 좋은 날 (2010)', url: 'https://www.youtube.com/watch?v=jeqdYqsrsA0' },
-                    { title: 'EXID - 위아래 (2014)', url: 'https://www.youtube.com/watch?v=hfXZ6ydgZyo' },
-                    { title: 'BIGBANG - Fantastic Baby (2012)', url: 'https://www.youtube.com/watch?v=AAbokV76tkU' }
+                    { title: '싸이 - 강남스타일 (2012)', url: 'https://www.youtube.com/watch?v=9bZkp7q19f0', start: 0 },
+                    { title: 'EXO - 으르렁 (Growl) (2013)', url: 'https://www.youtube.com/watch?v=I3nexVsk27U', start: 0 },
+                    { title: '아이유 - 좋은 날 (2010)', url: 'https://www.youtube.com/watch?v=jeqdYqsrsA0', start: 0 },
+                    { title: 'EXID - 위아래 (2014)', url: 'https://www.youtube.com/watch?v=hfXZ6ydgZyo', start: 0 },
+                    { title: 'BIGBANG - Fantastic Baby (2012)', url: 'https://www.youtube.com/watch?v=AAbokV76tkU', start: 0 }
                 ],
                 'POP': [
-                    { title: 'Mark Ronson - Uptown Funk (feat. Bruno Mars) (2014)', url: 'https://www.youtube.com/watch?v=OPf0YbXqDm0' },
-                    { title: 'Adele - Rolling in the Deep (2011)', url: 'https://www.youtube.com/watch?v=rYEDA3JcQqw' },
-                    { title: 'Maroon 5 - Sugar (2014)', url: 'https://www.youtube.com/watch?v=09R8_2nJtjg' },
-                    { title: 'Pharrell Williams - Happy (2013)', url: 'https://www.youtube.com/watch?v=ZbZSe6N_BXs' },
-                    { title: 'Carly Rae Jepsen - Call Me Maybe (2012)', url: 'https://www.youtube.com/watch?v=fWNaR-rxAic' }
+                    { title: 'Mark Ronson - Uptown Funk (feat. Bruno Mars) (2014)', url: 'https://www.youtube.com/watch?v=OPf0YbXqDm0', start: 0 },
+                    { title: 'Adele - Rolling in the Deep (2011)', url: 'https://www.youtube.com/watch?v=rYEDA3JcQqw', start: 0 },
+                    { title: 'Maroon 5 - Sugar (2014)', url: 'https://www.youtube.com/watch?v=09R8_2nJtjg', start: 0 },
+                    { title: 'Pharrell Williams - Happy (2013)', url: 'https://www.youtube.com/watch?v=ZbZSe6N_BXs', start: 0 },
+                    { title: 'Carly Rae Jepsen - Call Me Maybe (2012)', url: 'https://www.youtube.com/watch?v=fWNaR-rxAic', start: 0 }
                 ],
                 'JPOP': [
-                    { title: 'SEKAI NO OWARI - RPG (2013)', url: 'https://www.youtube.com/watch?v=Mi9uNu35Gmk' },
-                    { title: 'Kenshi Yonezu - アイネクライネ (2014)', url: 'https://www.youtube.com/watch?v=-EKxzId_sB4' },
-                    { title: 'Kyary Pamyu Pamyu - PonPonPon (2011)', url: 'https://www.youtube.com/watch?v=yzC4hFK5P3g' },
-                    { title: 'AKB48 - Koi Suru Fortune Cookie (2013)', url: 'https://www.youtube.com/watch?v=dFf4AgBNR1E' },
-                    { title: 'ONE OK ROCK - The Beginning (2012)', url: 'https://www.youtube.com/watch?v=Hh9yZWeTmVM' }
+                    { title: 'SEKAI NO OWARI - RPG (2013)', url: 'https://www.youtube.com/watch?v=Mi9uNu35Gmk', start: 0 },
+                    { title: 'Kenshi Yonezu - アイネクライネ (2014)', url: 'https://www.youtube.com/watch?v=-EKxzId_sB4', start: 0 },
+                    { title: 'Kyary Pamyu Pamyu - PonPonPon (2011)', url: 'https://www.youtube.com/watch?v=yzC4hFK5P3g', start: 0 },
+                    { title: 'AKB48 - Koi Suru Fortune Cookie (2013)', url: 'https://www.youtube.com/watch?v=dFf4AgBNR1E', start: 0 },
+                    { title: 'ONE OK ROCK - The Beginning (2012)', url: 'https://www.youtube.com/watch?v=Hh9yZWeTmVM', start: 0 }
                 ],
                 '발라드': [
-                    { title: '박효신 - 야생화 (2014)', url: 'https://www.youtube.com/watch?v=_hsqf_iP29E' },
-                    { title: '태양 - 눈, 코, 입 (2014)', url: 'https://www.youtube.com/watch?v=UwuAPyOImoI' },
-                    { title: '아이유 - 금요일에 만나요 (2013)', url: 'https://www.youtube.com/watch?v=EiVmQXu3S1A' },
-                    { title: '성시경 - 너의 모든 순간 (2014)', url: 'https://www.youtube.com/watch?v=1K3K3F0Ww0M' },
-                    { title: '이선희 - 그 중에 그대를 만나 (2014)', url: 'https://www.youtube.com/watch?v=a3K3F0Ww0M' }
+                    { title: '박효신 - 야생화 (2014)', url: 'https://www.youtube.com/watch?v=_hsqf_iP29E', start: 0 },
+                    { title: '태양 - 눈, 코, 입 (2014)', url: 'https://www.youtube.com/watch?v=UwuAPyOImoI', start: 0 },
+                    { title: '아이유 - 금요일에 만나요 (2013)', url: 'https://www.youtube.com/watch?v=EiVmQXu3S1A', start: 0 },
+                    { title: '성시경 - 너의 모든 순간 (2014)', url: 'https://www.youtube.com/watch?v=1K3K3F0Ww0M', start: 0 },
+                    { title: '이선희 - 그 중에 그대를 만나 (2014)', url: 'https://www.youtube.com/watch?v=a3K3F0Ww0M', start: 0 }
                 ],
                 '밴드': [
-                    { title: '버스커 버스커 - 벚꽃 엔딩 (2012)', url: 'https://www.youtube.com/watch?v=tXV7dfvSefo' },
-                    { title: '혁오 - 위잉위잉 (2014)', url: 'https://www.youtube.com/watch?v=V9X2w2K3F0M' },
-                    { title: '옥상달빛 - 수고했어, 오늘도 (2011)', url: 'https://www.youtube.com/watch?v=W9X2w2K3F0M' },
-                    { title: '장미여관 - 봉숙이 (2012)', url: 'https://www.youtube.com/watch?v=X9X2w2K3F0M' },
-                    { title: '씨엔블루 - 직감 (2011)', url: 'https://www.youtube.com/watch?v=Y9X2w2K3F0M' }
+                    { title: '버스커 버스커 - 벚꽃 엔딩 (2012)', url: 'https://www.youtube.com/watch?v=tXV7dfvSefo', start: 0 },
+                    { title: '혁오 - 위잉위잉 (2014)', url: 'https://www.youtube.com/watch?v=V9X2w2K3F0M', start: 0 },
+                    { title: '옥상달빛 - 수고했어, 오늘도 (2011)', url: 'https://www.youtube.com/watch?v=W9X2w2K3F0M', start: 0 },
+                    { title: '장미여관 - 봉숙이 (2012)', url: 'https://www.youtube.com/watch?v=X9X2w2K3F0M', start: 0 },
+                    { title: '씨엔블루 - 직감 (2011)', url: 'https://www.youtube.com/watch?v=Y9X2w2K3F0M', start: 0 }
                 ],
                 '힙합': [
-                    { title: '소유, 긱스 - Officially Missing You, Too (2012)', url: 'https://www.youtube.com/watch?v=Z9X2w2K3F0M' },
-                    { title: '빈지노 - Aqua Man (2012)', url: 'https://www.youtube.com/watch?v=a9X2w2K3F0M' },
-                    { title: '산이, 레이나 - 한여름밤의 꿀 (2014)', url: 'https://www.youtube.com/watch?v=b9X2w2K3F0M' },
-                    { title: '지코 - Boys And Girls (2015)', url: 'https://www.youtube.com/watch?v=c9X2w2K3F0M' },
-                    { title: '자이언티 - 양화대교 (2014)', url: 'https://www.youtube.com/watch?v=u9X2w2K3F0M' }
+                    { title: '소유, 긱스 - Officially Missing You, Too (2012)', url: 'https://www.youtube.com/watch?v=Z9X2w2K3F0M', start: 0 },
+                    { title: '빈지노 - Aqua Man (2012)', url: 'https://www.youtube.com/watch?v=a9X2w2K3F0M', start: 0 },
+                    { title: '산이, 레이나 - 한여름밤의 꿀 (2014)', url: 'https://www.youtube.com/watch?v=b9X2w2K3F0M', start: 0 },
+                    { title: '지코 - Boys And Girls (2015)', url: 'https://www.youtube.com/watch?v=c9X2w2K3F0M', start: 0 },
+                    { title: '자이언티 - 양화대교 (2014)', url: 'https://www.youtube.com/watch?v=u9X2w2K3F0M', start: 0 }
                 ]
             },
             '15~20': {
                 'KPOP': [
-                    { title: '방탄소년단 - Dynamite (2020)', url: 'https://www.youtube.com/watch?v=gdZLi9oWNZg' },
-                    { title: 'BLACKPINK - 뚜두뚜두 (2018)', url: 'https://www.youtube.com/watch?v=IHNzOHi8sJs' },
-                    { title: '트와이스 - CHEER UP (2016)', url: 'https://www.youtube.com/watch?v=c7rCjhfX3a0' },
-                    { title: 'Red Velvet - 빨간 맛 (2017)', url: 'https://www.youtube.com/watch?v=WyiIGEHQP8o' },
-                    { title: '지코 - 아무노래 (2020)', url: 'https://www.youtube.com/watch?v=UuV2vmM0blw' }
+                    { title: '방탄소년단 - Dynamite (2020)', url: 'https://www.youtube.com/watch?v=gdZLi9oWNZg', start: 0 },
+                    { title: 'BLACKPINK - 뚜두뚜두 (2018)', url: 'https://www.youtube.com/watch?v=IHNzOHi8sJs', start: 0 },
+                    { title: '트와이스 - CHEER UP (2016)', url: 'https://www.youtube.com/watch?v=c7rCjhfX3a0', start: 0 },
+                    { title: 'Red Velvet - 빨간 맛 (2017)', url: 'https://www.youtube.com/watch?v=WyiIGEHQP8o', start: 0 },
+                    { title: '지코 - 아무노래 (2020)', url: 'https://www.youtube.com/watch?v=UuV2vmM0blw', start: 0 }
                 ],
                 'POP': [
-                    { title: 'Ed Sheeran - Shape of You (2017)', url: 'https://www.youtube.com/watch?v=JGwWNGJdvx8' },
-                    { title: 'Camila Cabello - Havana (2017)', url: 'https://www.youtube.com/watch?v=HCjNJDNzw8Y' },
-                    { title: 'Billie Eilish - bad guy (2019)', url: 'https://www.youtube.com/watch?v=DyDfgMOUjCI' },
-                    { title: 'The Weeknd - Blinding Lights (2019)', url: 'https://www.youtube.com/watch?v=4NRXx6U8ABQ' },
-                    { title: 'The Chainsmokers - Closer (2016)', url: 'https://www.youtube.com/watch?v=PT2_F-1esPk' }
+                    { title: 'Ed Sheeran - Shape of You (2017)', url: 'https://www.youtube.com/watch?v=JGwWNGJdvx8', start: 0 },
+                    { title: 'Camila Cabello - Havana (2017)', url: 'https://www.youtube.com/watch?v=HCjNJDNzw8Y', start: 0 },
+                    { title: 'Billie Eilish - bad guy (2019)', url: 'https://www.youtube.com/watch?v=DyDfgMOUjCI', start: 0 },
+                    { title: 'The Weeknd - Blinding Lights (2019)', url: 'https://www.youtube.com/watch?v=4NRXx6U8ABQ', start: 0 },
+                    { title: 'The Chainsmokers - Closer (2016)', url: 'https://www.youtube.com/watch?v=PT2_F-1esPk', start: 0 }
                 ],
                 'JPOP': [
-                    { title: 'Kenshi Yonezu - Lemon (2018)', url: 'https://www.youtube.com/watch?v=SX_ViT4Ra7k' },
-                    { title: 'YOASOBI - 夜に駆ける (2019)', url: 'https://www.youtube.com/watch?v=x8VYWazR5mE' },
-                    { title: 'Official HIGE DANdism - Pretender (2019)', url: 'https://www.youtube.com/watch?v=TQ8WlA2GXbk' },
-                    { title: 'King Gnu - 白日 (2019)', url: 'https://www.youtube.com/watch?v=ony539T074w' },
-                    { title: 'LiSA - 紅蓮華 (2019)', url: 'https://www.youtube.com/watch?v=mpaIInJp4yM' }
+                    { title: 'Kenshi Yonezu - Lemon (2018)', url: 'https://www.youtube.com/watch?v=SX_ViT4Ra7k', start: 0 },
+                    { title: 'YOASOBI - 夜に駆ける (2019)', url: 'https://www.youtube.com/watch?v=x8VYWazR5mE', start: 0 },
+                    { title: 'Official HIGE DANdism - Pretender (2019)', url: 'https://www.youtube.com/watch?v=TQ8WlA2GXbk', start: 0 },
+                    { title: 'King Gnu - 白日 (2019)', url: 'https://www.youtube.com/watch?v=ony539T074w', start: 0 },
+                    { title: 'LiSA - 紅蓮華 (2019)', url: 'https://www.youtube.com/watch?v=mpaIInJp4yM', start: 0 }
                 ],
                 '발라드': [
-                    { title: '윤종신 - 좋니 (2017)', url: 'https://www.youtube.com/watch?v=b1X2w2K3F0M' },
-                    { title: '폴킴 - 모든 날, 모든 순간 (2018)', url: 'https://www.youtube.com/watch?v=c1X2w2K3F0M' },
-                    { title: '멜로망스 - 선물 (2017)', url: 'https://www.youtube.com/watch?v=d1X2w2K3F0M' },
-                    { title: '아이유 - 밤편지 (2017)', url: 'https://www.youtube.com/watch?v=e1X2w2K3F0M' },
-                    { title: '임창정 - 내가 저지른 사랑 (2016)', url: 'https://www.youtube.com/watch?v=f1X2w2K3F0M' }
+                    { title: '윤종신 - 좋니 (2017)', url: 'https://www.youtube.com/watch?v=b1X2w2K3F0M', start: 0 },
+                    { title: '폴킴 - 모든 날, 모든 순간 (2018)', url: 'https://www.youtube.com/watch?v=c1X2w2K3F0M', start: 0 },
+                    { title: '멜로망스 - 선물 (2017)', url: 'https://www.youtube.com/watch?v=d1X2w2K3F0M', start: 0 },
+                    { title: '아이유 - 밤편지 (2017)', url: 'https://www.youtube.com/watch?v=e1X2w2K3F0M', start: 0 },
+                    { title: '임창정 - 내가 저지른 사랑 (2016)', url: 'https://www.youtube.com/watch?v=f1X2w2K3F0M', start: 0 }
                 ],
                 '밴드': [
-                    { title: '잔나비 - 주저하는 연인들을 위해 (2019)', url: 'https://www.youtube.com/watch?v=g1X2w2K3F0M' },
-                    { title: 'DAY6 - 예뻤어 (2017)', url: 'https://www.youtube.com/watch?v=BS7tz2rAOSA' },
-                    { title: '엔플라잉 - 옥탑방 (2019)', url: 'https://www.youtube.com/watch?v=h1X2w2K3F0M' },
-                    { title: '볼빨간사춘기 - 우주를 줄게 (2016)', url: 'https://www.youtube.com/watch?v=i1X2w2K3F0M' },
-                    { title: 'HYUKOH - TOMBOY (2017)', url: 'https://www.youtube.com/watch?v=j1X2w2K3F0M' }
+                    { title: '잔나비 - 주저하는 연인들을 위해 (2019)', url: 'https://www.youtube.com/watch?v=g1X2w2K3F0M', start: 0 },
+                    { title: 'DAY6 - 예뻤어 (2017)', url: 'https://www.youtube.com/watch?v=BS7tz2rAOSA', start: 0 },
+                    { title: '엔플라잉 - 옥탑방 (2019)', url: 'https://www.youtube.com/watch?v=h1X2w2K3F0M', start: 0 },
+                    { title: '볼빨간사춘기 - 우주를 줄게 (2016)', url: 'https://www.youtube.com/watch?v=i1X2w2K3F0M', start: 0 },
+                    { title: 'HYUKOH - TOMBOY (2017)', url: 'https://www.youtube.com/watch?v=j1X2w2K3F0M', start: 0 }
                 ],
                 '힙합': [
-                    { title: '창모 - METEOR (2019)', url: 'https://www.youtube.com/watch?v=lOrU0MH0bMk&list=RDlOrU0MH0bMk&start_radio=1' },
-                    { title: '우원재 - 시차 (We Are) (2017)', url: 'https://www.youtube.com/watch?v=l1X2w2K3F0M' },
-                    { title: '비와이 - Day Day (2016)', url: 'https://www.youtube.com/watch?v=m1X2w2K3F0M' },
-                    { title: '마미손 - 소년점프 (2018)', url: 'https://www.youtube.com/watch?v=n1X2w2K3F0M' },
-                    { title: '하온(HAON) - 붕붕 (2018)', url: 'https://www.youtube.com/watch?v=o1X2w2K3F0M' }
+                    { title: '창모 - METEOR (2019)', url: 'https://www.youtube.com/watch?v=lOrU0MH0bMk&list=RDlOrU0MH0bMk&start_radio=1', start: 1 },
+                    { title: '우원재 - 시차 (We Are) (2017)', url: 'https://www.youtube.com/watch?v=l1X2w2K3F0M', start: 0 },
+                    { title: '비와이 - Day Day (2016)', url: 'https://www.youtube.com/watch?v=m1X2w2K3F0M', start: 0 },
+                    { title: '마미손 - 소년점프 (2018)', url: 'https://www.youtube.com/watch?v=n1X2w2K3F0M', start: 0 },
+                    { title: '하온(HAON) - 붕붕 (2018)', url: 'https://www.youtube.com/watch?v=o1X2w2K3F0M', start: 0 }
                 ]
             },
             '20~26': {
                 'KPOP': [
-                    { title: 'NewJeans - Hype Boy (2022)', url: 'https://www.youtube.com/watch?v=11cta61Wi0g' },
-                    { title: 'IVE - LOVE DIVE (2022)', url: 'https://www.youtube.com/watch?v=Y8JFxS1HlDo' },
-                    { title: 'aespa - Next Level (2021)', url: 'https://www.youtube.com/watch?v=4TWR90KJl84' },
-                    { title: '방탄소년단 - Butter (2021)', url: 'https://www.youtube.com/watch?v=WMweEpGlu_U' },
-                    { title: '(여자)아이들 - TOMBOY (2022)', url: 'https://www.youtube.com/watch?v=Jh4QFaPmdss' }
+                    { title: 'NewJeans - Hype Boy (2022)', url: 'https://www.youtube.com/watch?v=11cta61Wi0g', start: 0 },
+                    { title: 'IVE - LOVE DIVE (2022)', url: 'https://www.youtube.com/watch?v=Y8JFxS1HlDo', start: 0 },
+                    { title: 'aespa - Next Level (2021)', url: 'https://www.youtube.com/watch?v=4TWR90KJl84', start: 0 },
+                    { title: '방탄소년단 - Butter (2021)', url: 'https://www.youtube.com/watch?v=WMweEpGlu_U', start: 0 },
+                    { title: '(여자)아이들 - TOMBOY (2022)', url: 'https://www.youtube.com/watch?v=Jh4QFaPmdss', start: 0 }
                 ],
                 'POP': [
-                    { title: 'Harry Styles - As It Was (2022)', url: 'https://www.youtube.com/watch?v=H5v3kku4y6Q' },
-                    { title: 'Olivia Rodrigo - drivers license (2021)', url: 'https://www.youtube.com/watch?v=ZmDBbnmKpqQ' },
-                    { title: 'Taylor Swift - Anti-Hero (2022)', url: 'https://www.youtube.com/watch?v=b1kbLwvqugk' },
-                    { title: 'Kid LAROI, Justin Bieber - STAY (2021)', url: 'https://www.youtube.com/watch?v=kTJczUoc26U' },
-                    { title: 'Lady Gaga, Bruno Mars - Die With A Smile (2024)', url: 'https://www.youtube.com/watch?v=kPa7bsKwL-c' }
+                    { title: 'Harry Styles - As It Was (2022)', url: 'https://www.youtube.com/watch?v=H5v3kku4y6Q', start: 0 },
+                    { title: 'Olivia Rodrigo - drivers license (2021)', url: 'https://www.youtube.com/watch?v=ZmDBbnmKpqQ', start: 0 },
+                    { title: 'Taylor Swift - Anti-Hero (2022)', url: 'https://www.youtube.com/watch?v=b1kbLwvqugk', start: 0 },
+                    { title: 'Kid LAROI, Justin Bieber - STAY (2021)', url: 'https://www.youtube.com/watch?v=kTJczUoc26U', start: 0 },
+                    { title: 'Lady Gaga, Bruno Mars - Die With A Smile (2024)', url: 'https://www.youtube.com/watch?v=kPa7bsKwL-c', start: 0 }
                 ],
                 'JPOP': [
-                    { title: 'YOASOBI - アイドル (2023)', url: 'https://www.youtube.com/watch?v=ZRtdQ81jPUQ' },
-                    { title: 'Imase - NIGHT DANCER (2022)', url: 'https://www.youtube.com/watch?v=kqoG42J3yL4' },
-                    { title: 'Ado - うっせぇわ (2020)', url: 'https://www.youtube.com/watch?v=Qp3b-RXtz4w' },
-                    { title: 'Creepy Nuts - Bling-Bang-Bang-Born (2024)', url: 'https://www.youtube.com/watch?v=fA4mP-O0R3o' },
-                    { title: 'Yuuri - ドライフラワー (2020)', url: 'https://www.youtube.com/watch?v=y34An9Jzp4s' }
+                    { title: 'YOASOBI - アイドル (2023)', url: 'https://www.youtube.com/watch?v=ZRtdQ81jPUQ', start: 0 },
+                    { title: 'Imase - NIGHT DANCER (2022)', url: 'https://www.youtube.com/watch?v=kqoG42J3yL4', start: 0 },
+                    { title: 'Ado - うっせぇわ (2020)', url: 'https://www.youtube.com/watch?v=Qp3b-RXtz4w', start: 0 },
+                    { title: 'Creepy Nuts - Bling-Bang-Bang-Born (2024)', url: 'https://www.youtube.com/watch?v=fA4mP-O0R3o', start: 0 },
+                    { title: 'Yuuri - ドライフラワー (2020)', url: 'https://www.youtube.com/watch?v=y34An9Jzp4s', start: 0 }
                 ],
                 '발라드': [
-                    { title: '박재정 - 헤어지자 말해요 (2023)', url: 'https://www.youtube.com/watch?v=p1X2w2K3F0M' },
-                    { title: '이무진 - 신호등 (2021)', url: 'https://www.youtube.com/watch?v=SK6Sm2Ki9tI' },
-                    { title: '윤하 - 사건의 지평선 (2022)', url: 'https://www.youtube.com/watch?v=BBdC1rl5sKY' },
-                    { title: '경서 - 밤하늘의 별을(2020)', url: 'https://www.youtube.com/watch?v=r1X2w2K3F0M' },
-                    { title: '태연 - To. X (2023)', url: 'https://www.youtube.com/watch?v=s1X2w2K3F0M' }
+                    { title: '박재정 - 헤어지자 말해요 (2023)', url: 'https://www.youtube.com/watch?v=p1X2w2K3F0M', start: 0 },
+                    { title: '이무진 - 신호등 (2021)', url: 'https://www.youtube.com/watch?v=SK6Sm2Ki9tI', start: 0 },
+                    { title: '윤하 - 사건의 지평선 (2022)', url: 'https://www.youtube.com/watch?v=BBdC1rl5sKY', start: 0 },
+                    { title: '경서 - 밤하늘의 별을(2020)', url: 'https://www.youtube.com/watch?v=r1X2w2K3F0M', start: 0 },
+                    { title: '태연 - To. X (2023)', url: 'https://www.youtube.com/watch?v=s1X2w2K3F0M', start: 0 }
                 ],
                 '밴드': [
-                    { title: 'QWER - 고민중독 (2024)', url: 'https://www.youtube.com/watch?v=Ph48w_M82xU' },
-                    { title: 'DAY6 - 한 페이지가 될 수 있게', url: 'https://www.youtube.com/watch?v=vnS_qRmhU78' },
-                    { title: '실리카겔 - NO PAIN (2022)', url: 'https://www.youtube.com/watch?v=t1X2w2K3F0M' },
-                    { title: '루시(LUCY) - 개화 (2020)', url: 'https://www.youtube.com/watch?v=u1X2w2K3F0M' },
-                    { title: 'Wave to Earth - Seasons (2020)', url: 'https://www.youtube.com/watch?v=v1X2w2K3F0M' }
+                    { title: 'QWER - 고민중독 (2024)', url: 'https://www.youtube.com/watch?v=Ph48w_M82xU', start: 0 },
+                    { title: 'DAY6 - 한 페이지가 될 수 있게', url: 'https://www.youtube.com/watch?v=vnS_qRmhU78', start: 0 },
+                    { title: '실리카겔 - NO PAIN (2022)', url: 'https://www.youtube.com/watch?v=t1X2w2K3F0M', start: 0 },
+                    { title: '루시(LUCY) - 개화 (2020)', url: 'https://www.youtube.com/watch?v=u1X2w2K3F0M', start: 0 },
+                    { title: 'Wave to Earth - Seasons (2020)', url: 'https://www.youtube.com/watch?v=v1X2w2K3F0M', start: 0 }
                 ],
                 '힙합': [
-                    { title: '이영지 - Small girl (feat. 도경수) (2024)', url: 'https://www.youtube.com/watch?v=12345678901' },
-                    { title: 'BE\'O - Countin\' Stars (2021)', url: 'https://www.youtube.com/watch?v=w1X2w2K3F0M' },
-                    { title: 'Sokodomo - 회전목마 (2021)', url: 'https://www.youtube.com/watch?v=x1X2w2K3F0M' },
-                    { title: '다이나믹 듀오, 이영지 - Smoke (2023)', url: 'https://www.youtube.com/watch?v=y1X2w2K3F0M' },
-                    { title: '조광일 - 곡예사 (2020)', url: 'https://www.youtube.com/watch?v=z1X2w2K3F0M' }
+                    { title: '이영지 - Small girl (feat. 도경수) (2024)', url: 'https://www.youtube.com/watch?v=12345678901', start: 0 },
+                    { title: 'BE\'O - Countin\' Stars (2021)', url: 'https://www.youtube.com/watch?v=w1X2w2K3F0M', start: 0 },
+                    { title: 'Sokodomo - 회전목마 (2021)', url: 'https://www.youtube.com/watch?v=x1X2w2K3F0M', start: 0 },
+                    { title: '다이나믹 듀오, 이영지 - Smoke (2023)', url: 'https://www.youtube.com/watch?v=y1X2w2K3F0M', start: 0 },
+                    { title: '조광일 - 곡예사 (2020)', url: 'https://www.youtube.com/watch?v=z1X2w2K3F0M', start: 0 }
                 ]
             }
         };
@@ -563,6 +564,7 @@
                             return { 
                                 type: 'video', 
                                 src: song.url, 
+                                start: song.start || 0,
                                 duration: 1, 
                                 title: `🎵 [${y.text}] ${g.text} 1초 듣기\n정답 곡: ${song.title}` 
                             };
@@ -570,6 +572,7 @@
                             return { 
                                 type: 'video', 
                                 src: song.url, 
+                                start: song.start || 0,
                                 duration: 5, 
                                 title: `🎼 [${y.text}] ${g.text} MR 5초 듣기\n정답 곡: ${song.title}` 
                             };
@@ -594,11 +597,13 @@
         let isSpun = false;
         let selectedResult = { year: '', genre: '', quiz: '' };
         let currentQuizDuration = 0; 
+        let currentQuizStart = 0; // 시작 초(초 단위)
         let audioTimer = null; 
 
-        // 테스트 페이지 관련 상태
+        // 테스트 페이지 상태
         let testAudioTimer = null;
         let selectedTestSongUrl = '';
+        let selectedTestStart = 0;
         let selectedTestDuration = 1;
 
         function getRandomItemByWeight(items) {
@@ -667,6 +672,7 @@
                     if (quiz.type === 'video') {
                         const videoId = getYoutubeId(quiz.src);
                         currentQuizDuration = quiz.duration || 0;
+                        currentQuizStart = quiz.start || 0;
 
                         quizQuestionBox.innerHTML = `
                             <div class="text-lg md:text-xl font-bold mb-3 text-slate-800 whitespace-pre-line">${quiz.title}</div>
@@ -678,9 +684,9 @@
                                 </div>
                             </div>
 
-                            <!-- 숨겨진 유튜브 플레이어 -->
+                            <!-- 숨겨진 유튜브 플레이어 (start 시간 반영) -->
                             <iframe id="ytPlayer" class="w-0 h-0 opacity-0 absolute pointer-events-none" 
-                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0" 
+                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0&start=${currentQuizStart}" 
                                 allow="autoplay">
                             </iframe>
 
@@ -733,7 +739,7 @@
             isSpun = true;
         });
 
-        // 0초부터 지정 시간만큼 재생 후 자동 정지 함수
+        // 지정 시작 시간(start)부터 지정 시간(duration) 동안만 재생
         function playAudioWithLimit() {
             const iframe = document.getElementById('ytPlayer');
             const playBtn = document.getElementById('playAudioBtn');
@@ -742,7 +748,8 @@
             clearTimeout(audioTimer); 
 
             if (iframe) {
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*');
+                // 지정된 시작 위치(currentQuizStart)부터 탐색 후 재생
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [currentQuizStart, true] }), '*');
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
             }
 
@@ -784,15 +791,16 @@
             const testSongSelect = document.getElementById('testSongSelect');
             testSongSelect.innerHTML = '';
 
-            allSongList.forEach((song, idx) => {
+            allSongList.forEach((song) => {
                 const opt = document.createElement('option');
                 opt.value = song.url;
-                opt.innerText = song.title;
+                opt.innerText = song.start ? `${song.title} (${song.start}초부터)` : song.title;
                 testSongSelect.appendChild(opt);
             });
 
             if (allSongList.length > 0) {
                 selectedTestSongUrl = allSongList[0].url;
+                selectedTestStart = allSongList[0].start || 0;
                 updateTestPlayerIframe();
             }
         }
@@ -804,11 +812,12 @@
             
             const songObj = allSongList.find(s => s.url === selectedTestSongUrl);
             if (songObj && titleDisplay) {
-                titleDisplay.innerText = songObj.title;
+                selectedTestStart = songObj.start || 0;
+                titleDisplay.innerText = songObj.start ? `${songObj.title} [시작: ${songObj.start}초]` : songObj.title;
             }
 
             if (iframe && videoId) {
-                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0`;
+                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0&start=${selectedTestStart}`;
             }
         }
 
@@ -836,7 +845,7 @@
             clearTimeout(testAudioTimer);
 
             if (iframe) {
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [selectedTestStart, true] }), '*');
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
             }
 
