@@ -286,7 +286,7 @@
 
     <!-- 우측 하단 버전 표시 -->
     <div class="fixed bottom-3 right-4 text-xs font-semibold text-gray-400/80 tracking-wider pointer-events-none select-none">
-        v 1.5.6
+        v 1.5.7
     </div>
 
     <script>
@@ -342,7 +342,7 @@
                     { title: 'Nakashima Mika - 눈의 꽃 (雪の華) (2003)', url: 'https://www.youtube.com/watch?v=mF5Qq2YqI4U', start: 0 },
                     { title: 'SMAP - 세계에 하나뿐인 꽃 (世界に一つだけの花) (2003)', url: 'https://www.youtube.com/watch?v=r0f2o2vP5G0', start: 0 },
                     { title: 'Otsuka Ai - Sakuranbo (さくらんぼ) (2003)', url: 'https://www.youtube.com/watch?v=upR9K48E1N0', start: 0 },
-                    { title: 'ZONE - secret base 君がくれたもの (2001)', url: 'https://www.youtube.com/watch?v=f0b3Z2X7L8Y', start: 0 }
+                    { title: 'ZONE - secret base 君가くれたもの (2001)', url: 'https://www.youtube.com/watch?v=f0b3Z2X7L8Y', start: 0 }
                 ],
                 '발라드': [
                     { title: '브라운아이즈 - 벌써 일년 (2001)', url: 'https://www.youtube.com/watch?v=0kPq_E3Xq8Y', start: 0 },
@@ -490,7 +490,7 @@
                     { title: 'HYUKOH - TOMBOY (2017)', url: 'https://www.youtube.com/watch?v=j1X2w2K3F0M', start: 0 }
                 ],
                 '힙합': [
-                    { title: '창모 - METEOR (2019)', url: 'https://youtu.be/lOrU0MH0bMk?si=w_eUd8KkUwptbS7P', start: 2 },
+                    { title: '창모 - METEOR (2019)', url: 'https://www.youtube.com/watch?v=lOrU0MH0bMk&list=RDlOrU0MH0bMk&start_radio=1', start: 2 },
                     { title: '우원재 - 시차 (We Are) (2017)', url: 'https://www.youtube.com/watch?v=l1X2w2K3F0M', start: 0 },
                     { title: '비와이 - Day Day (2016)', url: 'https://www.youtube.com/watch?v=m1X2w2K3F0M', start: 0 },
                     { title: '마미손 - 소년점프 (2018)', url: 'https://www.youtube.com/watch?v=n1X2w2K3F0M', start: 0 },
@@ -736,7 +736,7 @@
             isSpun = true;
         });
 
-        // 퀴즈 화면 음원 재생 (시차 보정으로 첫 재생 시 start 위치 적용 보장)
+        // 퀴즈 화면 음원 재생 (잔향음 제거 보정)
         function playAudioWithLimit() {
             const iframe = document.getElementById('ytPlayer');
             const playBtn = document.getElementById('playAudioBtn');
@@ -745,11 +745,14 @@
             clearTimeout(audioTimer); 
 
             if (iframe && iframe.contentWindow) {
+                // 이전 잔향음 출력을 방지하기 위해 음소거 후 이동
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute' }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [currentQuizStart, true] }), '*');
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
-                
+
                 setTimeout(() => {
-                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [currentQuizStart, true] }), '*');
-                }, 150);
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute' }), '*');
+                }, 100);
             }
 
             if (playBtn) {
@@ -762,7 +765,7 @@
 
             audioTimer = setTimeout(() => {
                 stopAudio();
-            }, (currentQuizDuration * 1000) + 150);
+            }, (currentQuizDuration * 1000) + 100);
         }
 
         function stopAudio() {
@@ -836,7 +839,7 @@
             }
         }
 
-        // 테스트 페이지 음원 재생 (시차 보정 적용)
+        // 테스트 페이지 음원 재생 (잔향음 제거 보정)
         function playTestAudioWithLimit() {
             const iframe = document.getElementById('testYtPlayer');
             const playBtn = document.getElementById('testPlayAudioBtn');
@@ -845,11 +848,13 @@
             clearTimeout(testAudioTimer);
 
             if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute' }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [selectedTestStart, true] }), '*');
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
 
                 setTimeout(() => {
-                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [selectedTestStart, true] }), '*');
-                }, 150);
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute' }), '*');
+                }, 100);
             }
 
             if (playBtn) {
@@ -862,7 +867,7 @@
 
             testAudioTimer = setTimeout(() => {
                 stopTestAudio();
-            }, (selectedTestDuration * 1000) + 150);
+            }, (selectedTestDuration * 1000) + 100);
         }
 
         function stopTestAudio() {
