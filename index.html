@@ -86,6 +86,20 @@
             cursor: not-allowed;
             color: #aaa;
         }
+
+        /* 오디오 플레이어 관련 클래스 */
+        .btn-active-play {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+        }
+        .btn-active-stop {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .btn-inactive {
+            background-color: #4b5563; /* gray-600 */
+            color: #d1d5db; /* gray-300 */
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -145,7 +159,7 @@
             <h2 class="title-font text-4xl text-yellow-400 drop-shadow-md">QUIZ TIME</h2>
         </div>
 
-        <div id="quizQuestionBox" class="w-full bg-white rounded-2xl min-h-80 md:min-h-96 shadow-2xl flex flex-col items-center justify-center p-4 text-black text-xl md:text-2xl font-bold mb-8 text-center leading-relaxed overflow-hidden">
+        <div id="quizQuestionBox" class="w-full bg-white rounded-2xl min-h-80 md:min-h-96 shadow-2xl flex flex-col items-center justify-center p-6 text-black text-xl md:text-2xl font-bold mb-8 text-center leading-relaxed overflow-hidden">
             여기에 문제가 출제됩니다.
         </div>
 
@@ -215,7 +229,6 @@
             { label: '배민 1만원', weight: 1, color: '#34d399' }
         ];
 
-        // 각 노래별 매핑된 실제 유튜브 링크 데이터
         const rawSongData = {
             '00~05': {
                 'KPOP': [
@@ -438,9 +451,6 @@
             }
         };
 
-        // -----------------------------------------------------------------
-        // [90개 키 퀴즈 데이터베이스 구조화 생성]
-        // -----------------------------------------------------------------
         const quizDatabase = {};
 
         col1Data.forEach(y => {
@@ -463,7 +473,7 @@
                                 src: song.url, 
                                 title: `🎼 [${y.text}] ${g.text} MR 5초 듣기\n정답 곡: ${song.title}` 
                             };
-                        } else { // 가사 보기
+                        } else {
                             return { 
                                 type: 'text', 
                                 title: `📝 [${y.text}] ${g.text} 가사 보기\n\n정답 곡: ${song.title}` 
@@ -550,14 +560,25 @@
                         quizQuestionBox.innerHTML = `
                             <div class="text-lg md:text-xl font-bold mb-3 text-slate-800 whitespace-pre-line">${quiz.title}</div>
                             
+                            <!-- 유튜브 영상 플레이어 출력 -->
                             <div class="w-full h-48 md:h-64 my-2">
                                 <iframe class="w-full h-full rounded-xl shadow border-2 border-slate-300" 
-                                    src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0" 
+                                    src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=1&rel=0" 
                                     title="YouTube video player" 
                                     frameborder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                     allowfullscreen>
                                 </iframe>
+                            </div>
+
+                            <!-- 음원 제어용 버튼 -->
+                            <div class="flex gap-4 mt-2">
+                                <button id="playAudioBtn" onclick="toggleAudio(true)" class="px-5 py-2 btn-inactive font-bold text-sm rounded-lg shadow transition">
+                                    ▶ 음원 재생
+                                </button>
+                                <button id="stopAudioBtn" onclick="toggleAudio(false)" class="px-5 py-2 btn-active-stop font-bold text-sm rounded-lg shadow transition">
+                                    ⏸ 정지
+                                </button>
                             </div>
                         `;
                     } else {
@@ -601,6 +622,30 @@
             spinBtn.disabled = false;
             isSpun = true;
         });
+
+        // 음원 재생/정지 토글 및 버튼 색상 전환 함수
+        function toggleAudio(play) {
+            const iframe = document.querySelector('#quizQuestionBox iframe');
+            const playBtn = document.getElementById('playAudioBtn');
+            const stopBtn = document.getElementById('stopAudioBtn');
+
+            if (iframe) {
+                const command = play ? 'playVideo' : 'pauseVideo';
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
+            }
+
+            if (playBtn && stopBtn) {
+                if (play) {
+                    // 재생 상태: 재생 버튼 회색, 정지 버튼 활성화(빨간색)
+                    playBtn.className = 'px-5 py-2 btn-inactive font-bold text-sm rounded-lg shadow transition';
+                    stopBtn.className = 'px-5 py-2 btn-active-stop font-bold text-sm rounded-lg shadow transition';
+                } else {
+                    // 정지 상태: 재생 버튼 활성화(인디고), 정지 버튼 회색
+                    playBtn.className = 'px-5 py-2 btn-active-play font-bold text-sm rounded-lg shadow transition';
+                    stopBtn.className = 'px-5 py-2 btn-inactive font-bold text-sm rounded-lg shadow transition';
+                }
+            }
+        }
 
         const canvas = document.getElementById('rouletteCanvas');
         const ctx = canvas.getContext('2d');
@@ -646,6 +691,7 @@
         drawRoulette();
 
         document.getElementById('btnO').addEventListener('click', () => {
+            toggleAudio(false);
             popupO.classList.remove('hidden');
             popupO.classList.add('flex');
             popupRouletteResult.innerText = '';
@@ -704,6 +750,7 @@
         });
 
         document.getElementById('btnX').addEventListener('click', () => {
+            toggleAudio(false);
             popupX.classList.remove('hidden');
             popupX.classList.add('flex');
         });
