@@ -242,7 +242,7 @@
             <div>
                 <label class="block text-gray-300 text-sm font-bold mb-1">⏱️ 재생 시간 선택</label>
                 <select id="testDurationSelect" onchange="changeTestDuration()" class="w-full bg-slate-800 border border-slate-600 text-white rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500">
-                    <option value="1">1초 듣기</option>
+                    <option value="1">도입부 1초 듣기</option>
                     <option value="5">5초 듣기</option>
                 </select>
             </div>
@@ -286,7 +286,7 @@
 
     <!-- 우측 하단 버전 표시 -->
     <div class="fixed bottom-3 right-4 text-xs font-semibold text-gray-400/80 tracking-wider pointer-events-none select-none">
-        v 1.5.7
+        v 1.6.0
     </div>
 
     <script>
@@ -308,34 +308,35 @@
         ];
 
         const col3Data = [
-            { text: '1초 듣기', weight: 1 },
+            { text: '도입부 1초 듣기', weight: 1 },
             { text: '가사 보기', weight: 1 },
-            { text: 'MR 5초 듣기', weight: 1 }
+            { text: '중간 5초 듣기', weight: 1 }
         ];
 
         const wheelItems = [
             { label: '마이쮸', weight: 47, color: '#f87171' },
             { label: '초콜렛', weight: 47, color: '#fbbf24' },
-            { label: 'ing쿠폰 5천원', weight: 5, color: '#60a5fa' },
-            { label: '배민 1만원', weight: 1, color: '#34d399' }
+            { label: 'ing쿠폰 5천원', weight: 3, color: '#60a5fa' },
+            { label: 'ing쿠폰 1만원', weight: 1, color: '#34d399' },
+            { label: '핸드선풍기', weight: 2, color: '#34d399' }
         ];
 
         // 곡별 시작 초(start) 지정 옵션 포함
         const rawSongData = {
             '00~05': {
                 'KPOP': [
-                    { title: '보아 - No.1 (2002)', url: 'https://www.youtube.com/watch?v=ceZ3-A1w68M', start: 0 },
-                    { title: '동방신기 - Hug (2004)', url: 'https://www.youtube.com/watch?v=RNprQY23I90', start: 0 },
-                    { title: 'god - 촛불하나 (2000)', url: 'https://www.youtube.com/watch?v=uK1X_c3xGNo', start: 0 },
-                    { title: '신화 - Perfect Man (2002)', url: 'https://www.youtube.com/watch?v=3iXk5GvM9x0', start: 0 },
-                    { title: '비 - 태양을 피하는 방법 (2003)', url: 'https://www.youtube.com/watch?v=0j3tE1A2fC0', start: 0 }
+                    { title: '보아 - No.1 (2002)', url: 'https://youtu.be/i80e7OAVCcs?si=SI7K-49lHZNemrkb', start: 0 },
+                    { title: '동방신기 - Hug (2004)', url: 'https://youtu.be/jNOd5qdz_DQ?si=-tymAKj6p6Zs5eKk', start: 1 },
+                    { title: 'god - 촛불하나 (2000)', url: 'https://youtu.be/h_DnVzMrkkg?si=sT0gvgP86Y6EzIic', start: 0 },
+                    { title: '신화 - Perfect Man (2002)', url: 'https://youtu.be/muZg1TzDepM?si=kqpyrBMOwzCaXW6S', start: 0 },
+                    { title: '비 - 태양을 피하는 방법 (2003)', url: 'https://youtu.be/be94quAcagk?si=KEELNl4HeZ_jd8It', start: 5 }
                 ],
                 'POP': [
-                    { title: 'Britney Spears - Toxic (2003)', url: 'https://www.youtube.com/watch?v=LOZuxwoc7B8', start: 0 },
-                    { title: 'Eminem - Lose Yourself (2002)', url: 'https://www.youtube.com/watch?v=_Yhyp-_hX2s', start: 0 },
-                    { title: 'Beyonce - Crazy In Love (2003)', url: 'https://www.youtube.com/watch?v=ViwtNLUqk4U', start: 0 },
-                    { title: 'Avril Lavigne - Sk8er Boi (2002)', url: 'https://www.youtube.com/watch?v=TIy3n2b7V9k', start: 0 },
-                    { title: 'Maroon 5 - This Love (2002)', url: 'https://www.youtube.com/watch?v=XPpTgZwycfg', start: 0 }
+                    { title: 'Britney Spears - Toxic (2003)', url: 'https://youtu.be/83AOwdfH1Z0?si=om_vJAoDlVDDRH_d', start: 0 },
+                    { title: 'Eminem - Lose Yourself (2002)', url: 'https://youtu.be/mwGtM-o1ynE?si=6Rq1JEv8OALUXCSd', start: 1 },
+                    { title: 'Beyonce - Crazy In Love (2003)', url: 'https://youtu.be/Fza-mF31CuQ?si=xDlzy2BrXTsOsdFC', start: 10 },
+                    { title: 'Avril Lavigne - Sk8er Boi (2002)', url: 'https://youtu.be/jk7kOinbyP0?si=SFZ3wINsyxtLQk4L', start: 0 },
+                    { title: 'Maroon 5 - This Love (2002)', url: 'https://youtu.be/t2xX0lS_06Y?si=UIXKOuFTgsZdj_i3', start: 0 }
                 ],
                 'JPOP': [
                     { title: 'Utada Hikaru - First Love (2000)', url: 'https://www.youtube.com/watch?v=o1sUaVJUeB0', start: 0 },
@@ -560,21 +561,21 @@
                     const key = `${y.text}_${g.text}_${q.text}`;
 
                     quizDatabase[key] = songs.map(song => {
-                        if (q.text === '1초 듣기') {
+                        if (q.text === '도입부 1초 듣기') {
                             return { 
                                 type: 'video', 
                                 src: song.url, 
                                 start: song.start || 0,
                                 duration: 1, 
-                                title: `🎵 [${y.text}] ${g.text} 1초 듣기\n정답 곡: ${song.title}` 
+                                title: `🎵 [${y.text}] ${g.text} 도입부 1초 듣기\n정답 곡: ${song.title}` 
                             };
-                        } else if (q.text === 'MR 5초 듣기') {
+                        } else if (q.text === '중간 5초 듣기') {
                             return { 
                                 type: 'video', 
                                 src: song.url, 
                                 start: song.start || 0,
                                 duration: 5, 
-                                title: `🎼 [${y.text}] ${g.text} MR 5초 듣기\n정답 곡: ${song.title}` 
+                                title: `🎼 [${y.text}] ${g.text} 중간 5초 듣기\n정답 곡: ${song.title}` 
                             };
                         } else {
                             return { 
