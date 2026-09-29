@@ -286,7 +286,7 @@
     </button>
 
     <div class="fixed bottom-3 right-4 text-xs font-semibold text-gray-400/80 tracking-wider pointer-events-none select-none">
-        v 1.7.0
+        v 1.7.1
     </div>
 
     <script>
@@ -307,23 +307,21 @@
             { text: '힙합', weight: 1 }
         ];
 
-        // 퀴즈 종류 확률 변경
         const col3Data = [
             { text: '도입부 1초 듣기', weight: 60 },
             { text: '중간 3초 듣기', weight: 30 },
             { text: '가사 보기', weight: 10 }
         ];
 
-        // 룰렛 색상 중복 수정
         const wheelItems = [
-            { label: '마이쮸', weight: 47, color: '#f87171' }, // Red
-            { label: '초콜렛', weight: 47, color: '#fbbf24' }, // Yellow
-            { label: 'ing쿠폰 5천원', weight: 3, color: '#60a5fa' }, // Blue
-            { label: 'ing쿠폰 1만원', weight: 1, color: '#34d399' }, // Green
-            { label: '핸드선풍기', weight: 2, color: '#a855f7' } // Purple (기존 Green에서 변경)
+            { label: '마이쮸', weight: 47, color: '#f87171' },
+            { label: '초콜렛', weight: 47, color: '#fbbf24' },
+            { label: 'ing쿠폰 5천원', weight: 3, color: '#60a5fa' },
+            { label: 'ing쿠폰 1만원', weight: 1, color: '#34d399' },
+            { label: '핸드선풍기', weight: 2, color: '#a855f7' }
         ];
 
-        // 곡별 가사 한줄(lyric) 추가
+        // 곡 리스트(v1.7.0 동일 유지)
         const rawSongData = {
             '00~05': {
                 'KPOP': [
@@ -572,16 +570,15 @@
                                 title: `🎵 [${y.text}] ${g.text} 도입부 1초 듣기\n정답 곡: ${song.title}` 
                             };
                         } else if (q.text === '중간 3초 듣기') {
-                            // 중간 3초 듣기: 60초 뒤부터 재생
+                            // 중간 3초 듣기는 기존 곡 설정 시간과 무관하게 무조건 60초부터 시작
                             return { 
                                 type: 'video', 
                                 src: song.url, 
-                                start: (song.start || 0) + 60, 
+                                start: 60, 
                                 duration: 3, 
                                 title: `🎼 [${y.text}] ${g.text} 중간 3초 듣기\n정답 곡: ${song.title}` 
                             };
                         } else {
-                            // 가사 보기
                             return { 
                                 type: 'text', 
                                 title: `📝 [${y.text}] ${g.text} 가사 보기\n\n"${song.lyric || '가사 정보 없음'}"\n\n정답 곡: ${song.title}` 
@@ -603,10 +600,16 @@
         let selectedResult = { year: '', genre: '', quiz: '' };
         let currentQuizDuration = 0; 
         let currentQuizStart = 0;
+        
+        // 타이머 상태 관리 변수들 (안전한 초기화를 위해 분리)
         let audioTimer = null; 
+        let delayPlayTimer = null;
+        let countInterval = null;
 
-        // 테스트 페이지 관련 상태
         let testAudioTimer = null;
+        let testDelayPlayTimer = null;
+        let testCountInterval = null;
+        
         let selectedTestSongUrl = '';
         let selectedTestStart = 0;
         let selectedTestDuration = 1;
@@ -669,7 +672,7 @@
                 const questionList = quizDatabase[quizKey];
                 
                 quizQuestionBox.innerHTML = '';
-                clearTimeout(audioTimer);
+                stopAudio(); // 이전 오디오 타이머 초기화
 
                 if (questionList && questionList.length > 0) {
                     const quiz = questionList[Math.floor(Math.random() * questionList.length)];
@@ -680,7 +683,6 @@
                         currentQuizStart = quiz.start || 0;
 
                         quizQuestionBox.innerHTML = `
-                            <!-- 카운트다운 오버레이 추가 -->
                             <div id="countdownDisplay" class="hidden absolute inset-0 bg-black/80 flex items-center justify-center text-yellow-400 text-8xl md:text-9xl font-black z-30">5</div>
                             
                             <div class="text-lg md:text-xl font-bold mb-3 text-slate-800 whitespace-pre-line">${quiz.title}</div>
@@ -692,7 +694,7 @@
                             </div>
 
                             <iframe id="ytPlayer" class="w-0 h-0 opacity-0 absolute pointer-events-none" 
-                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0&start=${currentQuizStart}" 
+                                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0" 
                                 allow="autoplay">
                             </iframe>
 
@@ -744,14 +746,17 @@
             isSpun = true;
         });
 
-        // 퀴즈 화면 5초 카운트다운 후 음원 재생 (음소거 버퍼링 적용)
+        // 퀴즈 화면 개선된 자연스러운 재생 로직
         function playAudioWithLimit() {
             const iframe = document.getElementById('ytPlayer');
             const playBtn = document.getElementById('playAudioBtn');
             const lpRecord = document.getElementById('lpRecord');
             const countdownDisplay = document.getElementById('countdownDisplay');
 
+            // 기존 진행중인 타이머 모두 안전하게 초기화
             clearTimeout(audioTimer); 
+            clearTimeout(delayPlayTimer);
+            clearInterval(countInterval);
 
             if (playBtn) {
                 playBtn.className = 'px-6 py-2.5 btn-inactive font-bold text-sm md:text-base rounded-xl shadow-md transition';
@@ -759,21 +764,38 @@
             }
 
             if (iframe && iframe.contentWindow) {
-                // 1. 음소거한 채로 백그라운드에서 재생하여 버퍼링 방지 및 로드
+                let T = currentQuizStart;
+                let duration = currentQuizDuration;
+
+                // 1. 처음엔 무조건 뮤트
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute' }), '*');
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                
+                if (T >= 5) {
+                    // 시작 시점이 5초 이상이면, 5초 전으로 탐색하여 뮤트된 상태로 즉시 재생 (버퍼링 및 자연스러운 카운트다운)
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [T - 5, true] }), '*');
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                } else {
+                    // 시작 시점이 5초 미만이면, 0초로 탐색 후 일시정지 상태 대기
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*');
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
+                    
+                    // (5 - T)초가 지난 시점부터 영상 재생 시작 (뮤트 상태)
+                    delayPlayTimer = setTimeout(() => {
+                        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                    }, (5 - T) * 1000);
+                }
                 
                 // 2. 화면에 5초 카운트다운 표시
                 let count = 5;
                 countdownDisplay.innerText = count;
                 countdownDisplay.classList.remove('hidden');
 
-                const countInterval = setInterval(() => {
+                countInterval = setInterval(() => {
                     count--;
                     if (count > 0) {
                         countdownDisplay.innerText = count;
                     } else {
-                        // 카운트다운 완료 처리
+                        // 카운트다운 0 도달 (정확히 시작 지점 T에 영상이 위치함)
                         clearInterval(countInterval);
                         countdownDisplay.classList.add('hidden');
 
@@ -781,17 +803,13 @@
                             lpRecord.classList.remove('paused-spin');
                         }
 
-                        // 시작 지점으로 정확히 이동한 후 재생 & 소리 켬
-                        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [currentQuizStart, true] }), '*');
-                        
-                        setTimeout(() => {
-                            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute' }), '*');
-                        }, 100);
+                        // 뮤트 해제하여 소리 출력
+                        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute' }), '*');
 
                         // 정해진 시간(1초 또는 3초) 뒤에 멈춤
                         audioTimer = setTimeout(() => {
                             stopAudio();
-                        }, (currentQuizDuration * 1000) + 100);
+                        }, duration * 1000);
                     }
                 }, 1000);
             }
@@ -799,10 +817,17 @@
 
         function stopAudio() {
             clearTimeout(audioTimer);
+            clearTimeout(delayPlayTimer);
+            clearInterval(countInterval);
 
             const iframe = document.getElementById('ytPlayer');
             const playBtn = document.getElementById('playAudioBtn');
             const lpRecord = document.getElementById('lpRecord');
+            const countdownDisplay = document.getElementById('countdownDisplay');
+
+            if (countdownDisplay) {
+                countdownDisplay.classList.add('hidden');
+            }
 
             if (iframe && iframe.contentWindow) {
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
@@ -843,10 +868,9 @@
             
             const songObj = allSongList.find(s => s.url === selectedTestSongUrl);
             
-            // 3초 듣기일 경우 60초 더하기 로직 반영
             if (songObj) {
                 if (selectedTestDuration === 3) {
-                    selectedTestStart = (songObj.start || 0) + 60;
+                    selectedTestStart = 60; // 3초 듣기일 경우 무조건 60초 고정
                 } else {
                     selectedTestStart = songObj.start || 0;
                 }
@@ -857,7 +881,7 @@
             }
 
             if (iframe && videoId) {
-                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0&start=${selectedTestStart}`;
+                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=0`;
             }
         }
 
@@ -879,7 +903,7 @@
             updateTestPlayerIframe();
         }
 
-        // 테스트 페이지 5초 카운트다운 후 음원 재생
+        // 테스트 페이지 개선된 자연스러운 재생 로직
         function playTestAudioWithLimit() {
             const iframe = document.getElementById('testYtPlayer');
             const playBtn = document.getElementById('testPlayAudioBtn');
@@ -887,6 +911,8 @@
             const testCountdownDisplay = document.getElementById('testCountdownDisplay');
 
             clearTimeout(testAudioTimer);
+            clearTimeout(testDelayPlayTimer);
+            clearInterval(testCountInterval);
 
             if (playBtn) {
                 playBtn.className = 'px-6 py-2.5 btn-inactive font-bold text-sm md:text-base rounded-xl shadow-md transition';
@@ -894,34 +920,44 @@
             }
 
             if (iframe && iframe.contentWindow) {
+                let T = selectedTestStart;
+                let duration = selectedTestDuration;
+
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute' }), '*');
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                
+                if (T >= 5) {
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [T - 5, true] }), '*');
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                } else {
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*');
+                    iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
+                    
+                    testDelayPlayTimer = setTimeout(() => {
+                        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
+                    }, (5 - T) * 1000);
+                }
                 
                 let count = 5;
                 testCountdownDisplay.innerText = count;
                 testCountdownDisplay.classList.remove('hidden');
 
-                const countInterval = setInterval(() => {
+                testCountInterval = setInterval(() => {
                     count--;
                     if (count > 0) {
                         testCountdownDisplay.innerText = count;
                     } else {
-                        clearInterval(countInterval);
+                        clearInterval(testCountInterval);
                         testCountdownDisplay.classList.add('hidden');
 
                         if (lpRecord) {
                             lpRecord.classList.remove('paused-spin');
                         }
 
-                        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [selectedTestStart, true] }), '*');
-                        
-                        setTimeout(() => {
-                            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute' }), '*');
-                        }, 100);
+                        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute' }), '*');
 
                         testAudioTimer = setTimeout(() => {
                             stopTestAudio();
-                        }, (selectedTestDuration * 1000) + 100);
+                        }, duration * 1000);
                     }
                 }, 1000);
             }
@@ -929,10 +965,17 @@
 
         function stopTestAudio() {
             clearTimeout(testAudioTimer);
+            clearTimeout(testDelayPlayTimer);
+            clearInterval(testCountInterval);
 
             const iframe = document.getElementById('testYtPlayer');
             const playBtn = document.getElementById('testPlayAudioBtn');
             const lpRecord = document.getElementById('testLpRecord');
+            const testCountdownDisplay = document.getElementById('testCountdownDisplay');
+
+            if (testCountdownDisplay) {
+                testCountdownDisplay.classList.add('hidden');
+            }
 
             if (iframe && iframe.contentWindow) {
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
