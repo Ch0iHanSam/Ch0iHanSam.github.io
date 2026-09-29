@@ -133,14 +133,25 @@
 
     <!-- 1. 룰렛 메인 화면 영역 -->
     <div id="rouletteScreen" class="w-full flex flex-col items-center justify-center">
-        <div class="text-center mb-8">
+        <div class="text-center mb-6">
             <h1 class="title-font text-5xl md:text-7xl text-yellow-400 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] mb-2">SORISAE MUSIC QUIZ</h1>
             <p class="text-gray-300 font-bold text-lg md:text-xl">노래를 맞춰보세요!</p>
         </div>
 
-        <div class="slot-machine-container w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-4 mb-10">
-            <div class="flex-1">
-                <div class="text-center text-yellow-300 font-bold mb-2 tracking-widest text-sm">YEAR</div>
+        <div class="slot-machine-container w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-4 mb-8">
+            <!-- SLOT 1: YEAR -->
+            <div class="flex-1 flex flex-col gap-2">
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-yellow-300 font-bold tracking-widest text-sm">YEAR</span>
+                    <select id="lockYear" class="bg-slate-900 border border-yellow-500/50 text-yellow-300 text-xs rounded px-1.5 py-0.5 focus:outline-none">
+                        <option value="RANDOM">전체 랜덤</option>
+                        <option value="00~05">00~05</option>
+                        <option value="05~10">05~10</option>
+                        <option value="10~15">10~15</option>
+                        <option value="15~20">15~20</option>
+                        <option value="20~26">20~26</option>
+                    </select>
+                </div>
                 <div class="slot-window">
                     <div class="slot-wrapper" id="slot1">
                         <div class="slot-item">년도</div>
@@ -148,8 +159,20 @@
                 </div>
             </div>
 
-            <div class="flex-1">
-                <div class="text-center text-yellow-300 font-bold mb-2 tracking-widest text-sm">GENRE</div>
+            <!-- SLOT 2: GENRE -->
+            <div class="flex-1 flex flex-col gap-2">
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-yellow-300 font-bold tracking-widest text-sm">GENRE</span>
+                    <select id="lockGenre" class="bg-slate-900 border border-yellow-500/50 text-yellow-300 text-xs rounded px-1.5 py-0.5 focus:outline-none">
+                        <option value="RANDOM">전체 랜덤</option>
+                        <option value="POP">POP</option>
+                        <option value="KPOP">KPOP</option>
+                        <option value="JPOP">JPOP</option>
+                        <option value="발라드">발라드</option>
+                        <option value="밴드">밴드</option>
+                        <option value="힙합">힙합</option>
+                    </select>
+                </div>
                 <div class="slot-window">
                     <div class="slot-wrapper" id="slot2">
                         <div class="slot-item">장르</div>
@@ -157,8 +180,17 @@
                 </div>
             </div>
 
-            <div class="flex-1">
-                <div class="text-center text-yellow-300 font-bold mb-2 tracking-widest text-sm">QUIZ</div>
+            <!-- SLOT 3: QUIZ -->
+            <div class="flex-1 flex flex-col gap-2">
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-yellow-300 font-bold tracking-widest text-sm">QUIZ</span>
+                    <select id="lockQuiz" class="bg-slate-900 border border-yellow-500/50 text-yellow-300 text-xs rounded px-1.5 py-0.5 focus:outline-none">
+                        <option value="RANDOM">전체 랜덤</option>
+                        <option value="도입부 1초 듣기">도입부 1초 듣기</option>
+                        <option value="중간 3초 듣기">중간 3초 듣기</option>
+                        <option value="가사 보기">가사 보기</option>
+                    </select>
+                </div>
                 <div class="slot-window">
                     <div class="slot-wrapper" id="slot3">
                         <div class="slot-item">퀴즈 종류</div>
@@ -209,7 +241,6 @@
 
         <!-- LP판 재생 메뉴 -->
         <div class="relative w-full bg-white rounded-xl p-6 shadow-inner flex flex-col items-center justify-center mb-6 text-black overflow-hidden">
-            <!-- 테스트 카운트다운 오버레이 -->
             <div id="testCountdownDisplay" class="hidden absolute inset-0 bg-black/80 flex items-center justify-center text-yellow-400 text-8xl md:text-9xl font-black z-30">5</div>
 
             <div id="testSongTitleDisplay" class="text-base md:text-lg font-bold mb-3 text-slate-800 text-center">
@@ -228,7 +259,7 @@
 
             <div class="flex mt-3 justify-center">
                 <button id="testPlayAudioBtn" onclick="playTestAudioWithLimit()" class="px-6 py-2.5 btn-active-play font-bold text-sm md:text-base rounded-xl shadow-md transition">
-                    ▶ 음원 재생 (1초)
+                    ▶ 음원 재생 (2초)
                 </button>
             </div>
         </div>
@@ -244,8 +275,8 @@
             <div>
                 <label class="block text-gray-300 text-sm font-bold mb-1">⏱️ 재생 시간 선택</label>
                 <select id="testDurationSelect" onchange="changeTestDuration()" class="w-full bg-slate-800 border border-slate-600 text-white rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500">
-                    <option value="1">도입부 1초 듣기</option>
-                    <option value="3">중간 3초 듣기</option>
+                    <option value="2">도입부 1초 듣기 (실제 2초)</option>
+                    <option value="4">중간 3초 듣기 (실제 4초)</option>
                 </select>
             </div>
         </div>
@@ -286,7 +317,7 @@
     </button>
 
     <div class="fixed bottom-3 right-4 text-xs font-semibold text-gray-400/80 tracking-wider pointer-events-none select-none">
-        v 1.8.1
+        v 1.9.0
     </div>
 
     <script>
@@ -321,7 +352,6 @@
             { label: '핸드선풍기', weight: 2, color: '#a855f7' }
         ];
 
-        // 곡 리스트에 임의의 하이라이트 지점(highlight) 추가
         const rawSongData = {
             '00~05': {
                 'KPOP': [
@@ -561,13 +591,12 @@
                     const key = `${y.text}_${g.text}_${q.text}`;
 
                     quizDatabase[key] = songs.map(song => {
-                        // 정답 곡 정보는 공통으로 할당, title에는 정답을 숨김 처리
                         if (q.text === '도입부 1초 듣기') {
                             return { 
                                 type: 'video', 
                                 src: song.url, 
                                 start: song.start || 0,
-                                duration: 1, 
+                                duration: 2, // 실제 2초 재생
                                 title: `🎵 [${y.text}] ${g.text} 도입부 1초 듣기`,
                                 answer: song.title,
                                 highlight: song.highlight || 60
@@ -577,7 +606,7 @@
                                 type: 'video', 
                                 src: song.url, 
                                 start: 60, 
-                                duration: 3, 
+                                duration: 4, // 실제 4초 재생
                                 title: `🎼 [${y.text}] ${g.text} 중간 3초 듣기`,
                                 answer: song.title,
                                 highlight: song.highlight || 60
@@ -585,7 +614,7 @@
                         } else {
                             return { 
                                 type: 'text', 
-                                src: song.url, // 가사 보기에서도 하이라이트 재생을 위해 src 포함
+                                src: song.url, 
                                 title: `📝 [${y.text}] ${g.text} 가사 보기\n\n"${song.lyric || '가사 정보 없음'}"`,
                                 answer: song.title,
                                 highlight: song.highlight || 60
@@ -608,7 +637,6 @@
         let currentQuizDuration = 0; 
         let currentQuizStart = 0;
         
-        // 타이머 상태 관리 변수들
         let audioTimer = null; 
         let delayPlayTimer = null;
         let countInterval = null;
@@ -619,7 +647,7 @@
         
         let selectedTestSongUrl = '';
         let selectedTestStart = 0;
-        let selectedTestDuration = 1;
+        let selectedTestDuration = 2; // 테스트 기본 2초
 
         function getRandomItemByWeight(items) {
             const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
@@ -688,7 +716,6 @@
                     currentQuizDuration = quiz.duration || 0;
                     currentQuizStart = quiz.start || 0;
 
-                    // 가사 보기와 듣기 문제 모두 유튜브 플레이어와 정답 보기 버튼을 공통으로 렌더링
                     quizQuestionBox.innerHTML = `
                         <div id="countdownDisplay" class="hidden absolute inset-0 bg-black/80 flex items-center justify-center text-yellow-400 text-8xl md:text-9xl font-black z-30">5</div>
                         
@@ -710,12 +737,12 @@
                         ${quiz.type === 'video' ? `
                             <div class="flex mt-3 justify-center">
                                 <button id="playAudioBtn" onclick="playAudioWithLimit()" class="px-6 py-2.5 btn-active-play font-bold text-sm md:text-base rounded-xl shadow-md transition">
-                                    ▶ 음원 재생 (${currentQuizDuration}초)
+                                    ▶ 음원 재생 (${currentQuizDuration === 2 ? '도입부 2초' : '중간 4초'})
                                 </button>
                             </div>
                         ` : ''}
 
-                        <!-- 정답 보기 영역 -->
+                        <!-- 정답 보기 영역 (가사 보기 포함 모든 문제 통일) -->
                         <div class="mt-6 flex flex-col items-center w-full border-t-2 border-gray-100 pt-5">
                             <button id="showAnswerBtn" onclick="showAnswerAndPlayHighlight(${quiz.highlight})" class="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 active:scale-95 text-black font-black rounded-xl shadow-md transition border-2 border-yellow-500">
                                 👀 정답 보기
@@ -740,15 +767,32 @@
             resultBox.classList.remove('opacity-100');
             resultBox.classList.add('opacity-0');
 
-            const result1 = getRandomItemByWeight(col1Data);
-            const result2 = getRandomItemByWeight(col2Data);
-            const result3 = getRandomItemByWeight(col3Data);
+            // 드롭다운 고정 값 읽기
+            const lockYearVal = document.getElementById('lockYear').value;
+            const lockGenreVal = document.getElementById('lockGenre').value;
+            const lockQuizVal = document.getElementById('lockQuiz').value;
+
+            const result1 = lockYearVal !== 'RANDOM' ? lockYearVal : getRandomItemByWeight(col1Data);
+            const result2 = lockGenreVal !== 'RANDOM' ? lockGenreVal : getRandomItemByWeight(col2Data);
+            const result3 = lockQuizVal !== 'RANDOM' ? lockQuizVal : getRandomItemByWeight(col3Data);
 
             selectedResult = { year: result1, genre: result2, quiz: result3 };
 
-            const p1 = spinSlot('slot1', col1Data, result1, 2500, 30);
-            const p2 = spinSlot('slot2', col2Data, result2, 3500, 45);
-            const p3 = spinSlot('slot3', col3Data, result3, 4500, 60);
+            // 고정되지 않은 슬롯만 애니메이션 회전 적용
+            const p1 = lockYearVal !== 'RANDOM' ? Promise.resolve(result1) : spinSlot('slot1', col1Data, result1, 2500, 30);
+            const p2 = lockGenreVal !== 'RANDOM' ? Promise.resolve(result2) : spinSlot('slot2', col2Data, result2, 3500, 45);
+            const p3 = lockQuizVal !== 'RANDOM' ? Promise.resolve(result3) : spinSlot('slot3', col3Data, result3, 4500, 60);
+
+            // 고정된 슬롯은 즉시 정지 상태로 고정 값 표시
+            if (lockYearVal !== 'RANDOM') {
+                document.getElementById('slot1').innerHTML = `<div class="slot-item text-red-600">${result1}</div>`;
+            }
+            if (lockGenreVal !== 'RANDOM') {
+                document.getElementById('slot2').innerHTML = `<div class="slot-item text-red-600">${result2}</div>`;
+            }
+            if (lockQuizVal !== 'RANDOM') {
+                document.getElementById('slot3').innerHTML = `<div class="slot-item text-red-600">${result3}</div>`;
+            }
 
             await Promise.all([p1, p2, p3]);
 
@@ -764,9 +808,8 @@
             isSpun = true;
         });
 
-        // 정답 공개 및 하이라이트 재생
         window.showAnswerAndPlayHighlight = function(highlightTime) {
-            stopAudio(); // 진행 중인 카운트다운/재생을 멈춥니다.
+            stopAudio();
 
             const btn = document.getElementById('showAnswerBtn');
             const ans = document.getElementById('answerDisplay');
@@ -793,14 +836,12 @@
             }
         };
 
-        // 퀴즈 화면 개선된 자연스러운 재생 로직
         window.playAudioWithLimit = function() {
             const iframe = document.getElementById('ytPlayer');
             const playBtn = document.getElementById('playAudioBtn');
             const lpRecord = document.getElementById('lpRecord');
             const countdownDisplay = document.getElementById('countdownDisplay');
 
-            // 기존 진행중인 타이머 모두 안전하게 초기화
             clearTimeout(audioTimer); 
             clearTimeout(delayPlayTimer);
             clearInterval(countInterval);
@@ -814,7 +855,6 @@
                 let T = currentQuizStart;
                 let duration = currentQuizDuration;
 
-                // 1. 처음엔 무조건 뮤트
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'mute' }), '*');
                 
                 if (T >= 5) {
@@ -829,7 +869,6 @@
                     }, (5 - T) * 1000);
                 }
                 
-                // 2. 화면에 5초 카운트다운 표시
                 let count = 5;
                 countdownDisplay.innerText = count;
                 countdownDisplay.classList.remove('hidden');
@@ -874,7 +913,6 @@
                 iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
             }
 
-            // [정답 보기]를 누른 뒤에는 재생버튼을 활성화하지 않음
             const answerDisplay = document.getElementById('answerDisplay');
             if (playBtn && (!answerDisplay || answerDisplay.classList.contains('hidden'))) {
                 playBtn.className = 'px-6 py-2.5 btn-active-play font-bold text-sm md:text-base rounded-xl shadow-md transition';
@@ -913,8 +951,8 @@
             const songObj = allSongList.find(s => s.url === selectedTestSongUrl);
             
             if (songObj) {
-                if (selectedTestDuration === 3) {
-                    selectedTestStart = 60; // 3초 듣기일 경우 무조건 60초 고정
+                if (selectedTestDuration === 4) {
+                    selectedTestStart = 60; 
                 } else {
                     selectedTestStart = songObj.start || 0;
                 }
@@ -947,7 +985,6 @@
             updateTestPlayerIframe();
         }
 
-        // 테스트 페이지 개선된 자연스러운 재생 로직
         function playTestAudioWithLimit() {
             const iframe = document.getElementById('testYtPlayer');
             const playBtn = document.getElementById('testPlayAudioBtn');
@@ -1034,7 +1071,6 @@
             }
         }
 
-        // 화면 전환 이벤트 처리
         document.getElementById('openTestBtn').addEventListener('click', () => {
             stopAudio();
             rouletteScreen.classList.add('hidden');
