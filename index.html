@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사진 세로 병합 PDF 메이커</title>
+    <title>악보 세로 병합 PDF 메이커</title>
     <!-- PDF 생성을 위한 jsPDF 라이브러리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -22,13 +22,19 @@
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
         }
         h1 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
             color: #333;
+        }
+        p.desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+            word-break: keep-all;
         }
         .btn {
             background-color: #007aff;
@@ -55,17 +61,17 @@
         
         /* 캐러셀(미리보기) 스타일 */
         .carousel-container {
-            display: none; /* 초기에는 숨김 */
+            display: none;
             align-items: center;
             justify-content: space-between;
             margin: 20px 0;
-            background: #000;
+            background: #e9e9eb;
             border-radius: 8px;
-            padding: 10px;
+            padding: 15px;
             position: relative;
         }
         .carousel-btn {
-            background: rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.4);
             border: none;
             color: white;
             font-size: 1.5rem;
@@ -77,17 +83,18 @@
             align-items: center;
             justify-content: center;
         }
-        .carousel-btn:hover { background: rgba(255,255,255,0.6); }
+        .carousel-btn:hover { background: rgba(0,0,0,0.7); }
         .preview-img {
-            width: 200px;
-            height: 355px; /* 9:16 비율에 맞춘 미리보기 크기 */
-            object-fit: cover;
-            border-radius: 4px;
+            width: 225px;
+            height: 400px; /* 9:16 비율 */
+            object-fit: contain;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .page-indicator {
             color: white;
             position: absolute;
-            bottom: 20px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.6);
@@ -100,18 +107,19 @@
 <body>
 
 <div class="container">
-    <h1>📸 사진 세로 병합 (9:16)</h1>
+    <h1>🎼 악보 페이지 자동 배치기</h1>
+    <p class="desc">가로로 긴 조각 이미지들을 9:16 페이지 너비에 맞춰 차곡차곡 쌓아줍니다. 페이지를 넘어가면 자동으로 다음 장으로 넘어갑니다.</p>
     
     <!-- 사진 첨부 버튼 -->
     <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
-    <button class="btn" onclick="document.getElementById('fileInput').click()">사진 여러 장 첨부하기</button>
+    <button class="btn" onclick="document.getElementById('fileInput').click()">악보 조각 여러 장 첨부</button>
 
-    <!-- 미리보기 영역 -->
+    <!-- 미리보기 영역 (완성된 페이지들) -->
     <div class="carousel-container" id="carousel">
-        <button class="carousel-btn" onclick="prevImage()">❮</button>
-        <img id="previewImg" class="preview-img" src="" alt="미리보기">
+        <button class="carousel-btn" onclick="prevPage()">❮</button>
+        <img id="previewImg" class="preview-img" src="" alt="페이지 미리보기">
         <div class="page-indicator" id="pageIndicator">1 / 1</div>
-        <button class="carousel-btn" onclick="nextImage()">❯</button>
+        <button class="carousel-btn" onclick="nextPage()">❯</button>
     </div>
 
     <!-- 다운로드 버튼 -->
@@ -119,7 +127,10 @@
 </div>
 
 <script>
-    let processedImages = []; // 9:16으로 변환된 이미지 데이터 배열
+    const PAGE_WIDTH = 900;
+    const PAGE_HEIGHT = 1600; // 9:16 비율 고정 해상도
+    
+    let generatedPages = []; // 완성된 9:16 페이지(Canvas DataURL) 배열
     let currentIndex = 0;
 
     const fileInput = document.getElementById('fileInput');
@@ -128,84 +139,95 @@
     const pageIndicator = document.getElementById('pageIndicator');
     const downloadBtn = document.getElementById('downloadBtn');
 
-    // 사진 파일 선택 시 처리
+    // 파일 업로드 시 실행
     fileInput.addEventListener('change', async (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
 
-        processedImages = [];
-        currentIndex = 0;
         downloadBtn.disabled = true;
-        downloadBtn.innerText = "처리 중...";
+        downloadBtn.innerText = "페이지 배치 중...";
 
-        // 선택된 모든 파일을 9:16으로 변환
+        // 1. 모든 이미지를 순서대로 로드
+        const loadedImages = [];
         for (let file of files) {
-            const dataUrl = await processImageTo9x16(file);
-            processedImages.push(dataUrl);
+            const img = await loadImage(file);
+            loadedImages.push(img);
         }
 
-        // UI 업데이트
+        // 2. 이미지를 페이지에 차곡차곡 쌓기 알고리즘
+        generatedPages = [];
+        let currentCanvas = createCanvas();
+        let ctx = currentCanvas.getContext('2d');
+        let currentY = 0;
+
+        for (let img of loadedImages) {
+            // 이미지 너비를 페이지 너비(900)에 맞췄을 때의 비율 계산
+            const scale = PAGE_WIDTH / img.width;
+            const scaledHeight = img.height * scale;
+
+            // 현재 이미지를 넣었을 때 페이지 높이(1600)를 초과하는 경우 (단, 새 페이지의 첫 이미지인 경우는 제외)
+            if (currentY + scaledHeight > PAGE_HEIGHT && currentY > 0) {
+                // 현재까지 작성된 페이지를 배열에 저장
+                generatedPages.push(currentCanvas.toDataURL('image/jpeg', 0.9));
+                
+                // 새로운 하얀 페이지 생성
+                currentCanvas = createCanvas();
+                ctx = currentCanvas.getContext('2d');
+                currentY = 0; // Y좌표 초기화
+            }
+
+            // 페이지에 이미지 그리기 (x=0, y=currentY)
+            ctx.drawImage(img, 0, currentY, PAGE_WIDTH, scaledHeight);
+            currentY += scaledHeight; // 다음 이미지가 그려질 Y좌표 업데이트
+        }
+        
+        // 마지막으로 작업 중이던 페이지가 비어있지 않다면 배열에 추가
+        if (currentY > 0) {
+            generatedPages.push(currentCanvas.toDataURL('image/jpeg', 0.9));
+        }
+
+        // 3. UI 업데이트
+        currentIndex = 0;
         updateCarousel();
         carousel.style.display = 'flex';
         downloadBtn.disabled = false;
         downloadBtn.innerText = "PDF 다운로드";
     });
 
-    // 이미지를 9:16 비율로 자르고 변환하는 함수
-    function processImageTo9x16(file) {
+    // 파일로부터 Image 객체를 만드는 유틸리티 함수
+    function loadImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    // 병합 시 화질을 위해 고정 해상도 사용 (가로 900, 세로 1600)
-                    canvas.width = 900;
-                    canvas.height = 1600;
-                    const ctx = canvas.getContext('2d');
-
-                    const imgRatio = img.width / img.height;
-                    const targetRatio = 9 / 16;
-                    let sx, sy, sWidth, sHeight;
-
-                    // 비율에 맞춰 크롭(자르기) 영역 계산 (object-fit: cover 방식)
-                    if (imgRatio > targetRatio) {
-                        sHeight = img.height;
-                        sWidth = sHeight * targetRatio;
-                        sx = (img.width - sWidth) / 2;
-                        sy = 0;
-                    } else {
-                        sWidth = img.width;
-                        sHeight = sWidth / targetRatio;
-                        sx = 0;
-                        sy = (img.height - sHeight) / 2;
-                    }
-
-                    // 투명 배경일 경우를 대비해 흰색으로 채우기
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    // 캔버스에 이미지 그리기
-                    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-                    
-                    resolve(canvas.toDataURL('image/jpeg', 0.9));
-                };
+                img.onload = () => resolve(img);
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         });
     }
 
-    // 좌우 넘기기 함수
-    function prevImage() {
+    // 하얀색 배경의 900x1600 캔버스를 생성하는 함수
+    function createCanvas() {
+        const canvas = document.createElement('canvas');
+        canvas.width = PAGE_WIDTH;
+        canvas.height = PAGE_HEIGHT;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff'; // 남는 공간은 흰색
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return canvas;
+    }
+
+    // 좌우 넘기기 함수 (미리보기)
+    function prevPage() {
         if (currentIndex > 0) {
             currentIndex--;
             updateCarousel();
         }
     }
 
-    function nextImage() {
-        if (currentIndex < processedImages.length - 1) {
+    function nextPage() {
+        if (currentIndex < generatedPages.length - 1) {
             currentIndex++;
             updateCarousel();
         }
@@ -213,43 +235,41 @@
 
     // 캐러셀 UI 갱신
     function updateCarousel() {
-        if (processedImages.length > 0) {
-            previewImg.src = processedImages[currentIndex];
-            pageIndicator.innerText = `${currentIndex + 1} / ${processedImages.length}`;
+        if (generatedPages.length > 0) {
+            previewImg.src = generatedPages[currentIndex];
+            pageIndicator.innerText = `${currentIndex + 1} / ${generatedPages.length}`;
         }
     }
 
-    // PDF 생성 및 다운로드 함수
+    // 다중 페이지 PDF 생성 및 다운로드 함수
     function generatePDF() {
-        if (processedImages.length === 0) return;
+        if (generatedPages.length === 0) return;
         downloadBtn.innerText = "PDF 생성 중...";
         downloadBtn.disabled = true;
 
         setTimeout(() => {
             const { jsPDF } = window.jspdf;
             
-            // 모든 사진을 세로로 이어붙인 전체 높이 계산
-            const pageHeight = 1600 * processedImages.length;
-            const pageWidth = 900;
-
-            // 세로로 긴 사용자 정의 크기의 PDF 생성
+            // 9:16 커스텀 사이즈 (900x1600)의 PDF 문서 생성
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'px',
-                format: [pageWidth, pageHeight]
+                format: [PAGE_WIDTH, PAGE_HEIGHT]
             });
 
-            // 각 이미지를 Y좌표를 이동하며 PDF에 추가
-            processedImages.forEach((imgData, index) => {
-                const yOffset = index * 1600;
-                pdf.addImage(imgData, 'JPEG', 0, yOffset, pageWidth, 1600);
+            // 각 완성된 페이지 이미지를 PDF의 각 장에 삽입
+            generatedPages.forEach((pageDataUrl, index) => {
+                if (index > 0) {
+                    pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]); // 두 번째 페이지부터는 새 페이지 추가
+                }
+                pdf.addImage(pageDataUrl, 'JPEG', 0, 0, PAGE_WIDTH, PAGE_HEIGHT);
             });
 
-            pdf.save('stitched_photos.pdf');
+            pdf.save('sheet_music.pdf');
             
             downloadBtn.innerText = "PDF 다운로드";
             downloadBtn.disabled = false;
-        }, 100); // UI가 멈추지 않도록 약간의 지연 후 실행
+        }, 100);
     }
 </script>
 
